@@ -1,3 +1,4 @@
+import { assetUrl } from './assets';
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Gauge, Weight, Cable, ShieldCheck } from 'lucide-react';
@@ -42,7 +43,7 @@ const showcaseProducts: ShowcaseProduct[] = [
     tagline: 'Oxygen, delivered.',
     h2Headline: 'AERATION THAT NEVER SLEEPS.',
     caption: 'Engineered for relentless 24/7 dissolved oxygen enrichment with high-torque copper motors and reinforced bevel gearboxes.',
-    image: '/images/aerator-pro4-cutout.png',
+    image: assetUrl('/images/aerator-pro4-cutout.png'),
     alt: 'Siri Pro-4 heavy duty commercial paddle wheel aerator for aquaculture ponds',
     featureChip: 'SS-304 SUBFRAME',
     featureDesc: 'Marine-grade anti-corrosion chassis with UV-stabilized virgin HDPE floats',
@@ -64,10 +65,10 @@ const showcaseProducts: ShowcaseProduct[] = [
       standard: 'Tested per ASCE standard guidelines'
     },
     thumbs: [
-      '/images/aerator-pro4-cutout.png',
-      '/hero.webp',
-      '/images/ponds.webp',
-      '/images/pump.webp'
+      assetUrl('/images/aerator-pro4-cutout.png'),
+      assetUrl('/hero.webp'),
+      assetUrl('/images/ponds.webp'),
+      assetUrl('/images/pump.webp')
     ]
   },
   {
@@ -77,7 +78,7 @@ const showcaseProducts: ShowcaseProduct[] = [
     tagline: 'Power in every pulse.',
     h2Headline: 'HIGH VELOCITY. COMPACT FOOTPRINT.',
     caption: 'Specially configured for post-larvae nursery ponds, circular biofloc tanks and precision circulation corners.',
-    image: '/images/aerator-turbo2-cutout.png',
+    image: assetUrl('/images/aerator-turbo2-cutout.png'),
     alt: 'Siri Turbo-2 compact two paddle aerator for shrimp nurseries',
     featureChip: 'HIGH-TORQUE MOTOR',
     featureDesc: 'IP55 moisture-sealed motor winding with integrated thermal overload protection',
@@ -99,10 +100,10 @@ const showcaseProducts: ShowcaseProduct[] = [
       standard: 'Verified under saline brackish water tests'
     },
     thumbs: [
-      '/images/aerator-turbo2-cutout.png',
-      '/hero.webp',
-      '/images/pump.webp',
-      '/images/ponds.webp'
+      assetUrl('/images/aerator-turbo2-cutout.png'),
+      assetUrl('/hero.webp'),
+      assetUrl('/images/pump.webp'),
+      assetUrl('/images/ponds.webp')
     ]
   },
   {
@@ -112,7 +113,7 @@ const showcaseProducts: ShowcaseProduct[] = [
     tagline: 'Deep water renewed.',
     h2Headline: 'DEEP CIRCULATION. ZERO DEAD ZONES.',
     caption: 'Helical turbine lifts bottom anaerobic sludge, prevents temperature stratification and aerates the pond bottom floor.',
-    image: '/images/aerator-spiral-cutout.png',
+    image: assetUrl('/images/aerator-spiral-cutout.png'),
     alt: 'Siri Spiral-Flow subsurface helical impeller wave aerator',
     featureChip: 'HELICAL TURBINE',
     featureDesc: 'Hydrodynamically balanced marine bronze spiral blade with cavitation guard',
@@ -134,10 +135,10 @@ const showcaseProducts: ShowcaseProduct[] = [
       standard: 'Zero dead zone velocity verification'
     },
     thumbs: [
-      '/images/aerator-spiral-cutout.png',
-      '/images/pump.webp',
-      '/hero.webp',
-      '/images/ponds.webp'
+      assetUrl('/images/aerator-spiral-cutout.png'),
+      assetUrl('/images/pump.webp'),
+      assetUrl('/hero.webp'),
+      assetUrl('/images/ponds.webp')
     ]
   }
 ];
@@ -153,7 +154,7 @@ export function ProductShowcase(){
  const change=(index:number)=>setActive((index+showcaseProducts.length)%showcaseProducts.length);
  const info=[{Icon:Weight,label:'Weight',value:product.mainInfo.weight},{Icon:Gauge,label:'Power',value:product.mainInfo.power},{Icon:Cable,label:'Power supply',value:product.mainInfo.supply},{Icon:ShieldCheck,label:'Warranty',value:product.mainInfo.warranty}];
  return <section className="equipment-gallery" id="showcase" aria-label="Explore aeration equipment">
-   <div className="gallery-environment" aria-hidden="true"><img className="gallery-backdrop-photo" src="/images/gallery-backdrop.webp" alt="" width="1536" height="1024" loading="lazy"/><span className="gallery-light gallery-light-aqua"/><span className="gallery-light gallery-light-amber"/><span className="gallery-floor"/></div>
+   <div className="gallery-environment" aria-hidden="true"><img className="gallery-backdrop-photo" src={assetUrl('/images/gallery-backdrop.webp')} alt="" width="1536" height="1024" loading="lazy"/><span className="gallery-light gallery-light-aqua"/><span className="gallery-light gallery-light-amber"/><span className="gallery-floor"/></div>
    <div className="gallery-layout">
      <div className="gallery-left" data-scroll="fade-up">
        <span className="gallery-eyebrow">IN OUR ELEMENT / 0{active+1}</span>

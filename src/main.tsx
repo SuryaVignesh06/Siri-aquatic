@@ -1,3 +1,4 @@
+import { assetUrl } from './assets';
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
@@ -52,12 +53,12 @@ function Button({ to, children, light = false }: { to: string; children: React.R
 }
 
 const photos = [
-  { src: '/hero.webp', alt: 'Concept scene of a paddle wheel aerator operating in a pond', credit: 'Concept visual' },
-  { src: '/images/pump.webp', alt: 'Reference photograph of an electric water pump', credit: 'Reference photograph' },
-  { src: '/images/ponds.webp', alt: 'Aerial reference photograph of aquaculture ponds', credit: 'Reference photograph' },
-  { src: '/images/aerator-pro4-cutout.png', alt: 'Illustrative paddle wheel aerator', credit: 'Concept product render' },
-  { src: '/images/aerator-turbo2-cutout.png', alt: 'Illustrative compact paddle wheel aerator', credit: 'Concept product render' },
-  { src: '/images/aerator-spiral-cutout.png', alt: 'Illustrative spiral impeller', credit: 'Concept product render' }
+  { src: assetUrl('/hero.webp'), alt: 'Concept scene of a paddle wheel aerator operating in a pond', credit: 'Concept visual' },
+  { src: assetUrl('/images/pump.webp'), alt: 'Reference photograph of an electric water pump', credit: 'Reference photograph' },
+  { src: assetUrl('/images/ponds.webp'), alt: 'Aerial reference photograph of aquaculture ponds', credit: 'Reference photograph' },
+  { src: assetUrl('/images/aerator-pro4-cutout.png'), alt: 'Illustrative paddle wheel aerator', credit: 'Concept product render' },
+  { src: assetUrl('/images/aerator-turbo2-cutout.png'), alt: 'Illustrative compact paddle wheel aerator', credit: 'Concept product render' },
+  { src: assetUrl('/images/aerator-spiral-cutout.png'), alt: 'Illustrative spiral impeller', credit: 'Concept product render' }
 ];
 
 function Photo({ type = 0, className = '' }: { type?: number; className?: string }) {
@@ -74,7 +75,7 @@ function Photo({ type = 0, className = '' }: { type?: number; className?: string
       onLoad={(e) => e.currentTarget.classList.add('loaded')}
       onError={(e) => {
         e.currentTarget.onerror = null;
-        e.currentTarget.src = '/hero.webp';
+        e.currentTarget.src = assetUrl('/hero.webp');
         e.currentTarget.alt = 'Illustrative aquaculture pond';
         e.currentTarget.classList.add('loaded');
       }}
@@ -95,7 +96,7 @@ const products = [
 function Mark({ large = false }: { large?: boolean }) {
   return (
     <svg className={`mark ${large ? 'large' : ''}`} viewBox="30 8 580 440" role="img" aria-label="Siri Aquatic logo">
-      <image href="/siri-logo-transparent.webp" width="640" height="640" />
+      <image href={assetUrl('/siri-logo-transparent.webp')} width="640" height="640" />
     </svg>
   );
 }
@@ -105,7 +106,7 @@ function Brand() {
     <>
       <Mark />
       <svg className="wordmark" viewBox="45 475 565 140" role="img" aria-label="Siri Aquatic Solutions Pvt. Ltd. - Quality Comes First">
-        <image href="/siri-logo-transparent.webp" width="640" height="640" />
+        <image href={assetUrl('/siri-logo-transparent.webp')} width="640" height="640" />
       </svg>
     </>
   );
@@ -168,7 +169,7 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
 function HeroAtmosphere({reduced}:{reduced:boolean}){
  const ref=useRef<HTMLVideoElement>(null);const [paused,setPaused]=useState(false);
  useEffect(()=>{const v=ref.current;if(!v)return;const observer=new IntersectionObserver(([e])=>{if(e.isIntersecting&&!reduced&&!paused)v.play().catch(()=>{});else v.pause()},{threshold:.1});observer.observe(v);if(reduced||paused)v.pause();return()=>{observer.disconnect();v.pause()}},[reduced,paused]);
- return <><div className="hero-atmosphere" aria-hidden="true"><video ref={ref} src="/water-reel.mp4#t=5" muted loop playsInline preload="metadata"/></div><button type="button" className="atmosphere-control" onClick={()=>setPaused(!paused)} aria-pressed={paused} aria-label={paused?'Play background video':'Pause background video'}>{paused?<Play size={14}/>:<Pause size={14}/>}</button></>
+ return <><div className="hero-atmosphere" aria-hidden="true"><video ref={ref} src={assetUrl('/water-reel.mp4#t=5')} muted loop playsInline preload="metadata"/></div><button type="button" className="atmosphere-control" onClick={()=>setPaused(!paused)} aria-pressed={paused} aria-label={paused?'Play background video':'Pause background video'}>{paused?<Play size={14}/>:<Pause size={14}/>}</button></>
 }
 function LogoDarkFilter(){return <svg width="0" height="0" className="logo-filter-defs" aria-hidden="true"><defs><filter id="siri-logo-dark" colorInterpolationFilters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  2 2 2 0 -0.45" result="colors"/><feComposite in="colors" in2="SourceAlpha" operator="in" result="colorPixels"/><feFlood floodColor="#ffffff" result="white"/><feComposite in="white" in2="SourceAlpha" operator="in" result="whiteLogo"/><feMerge><feMergeNode in="whiteLogo"/><feMergeNode in="colorPixels"/></feMerge></filter></defs></svg>}
 
@@ -180,7 +181,7 @@ function HeroSection({reduced}:{reduced:boolean;menu:boolean;setMenu:React.Dispa
   useEffect(()=>{if(paused||reduced||!visible||interacting)return;const interval=window.setInterval(()=>setActiveEquipment(index=>(index+1)%3),4200);return()=>window.clearInterval(interval)},[paused,reduced,visible,interacting]);
   const rail=useRef<HTMLDivElement>(null);
   useEffect(()=>{const node=rail.current;if(!node)return;const io=new IntersectionObserver(([e])=>setVisible(e.isIntersecting),{threshold:.05});io.observe(node);return()=>io.disconnect()},[]);
-  const equipment=[{src:'/images/aerator-pro4-cutout.png',name:'Paddle wheel aerator'},{src:'/images/aerator-turbo2-cutout.png',name:'Compact aerator'},{src:'/images/aerator-spiral-cutout.png',name:'Spiral impeller'}];
+  const equipment=[{src:assetUrl('/images/aerator-pro4-cutout.png'),name:'Paddle wheel aerator'},{src:assetUrl('/images/aerator-turbo2-cutout.png'),name:'Compact aerator'},{src:assetUrl('/images/aerator-spiral-cutout.png'),name:'Spiral impeller'}];
   return <section className="calm-hero machine-hero poster-hero" id="hero" aria-label="Siri Aquatic introduction">
     <HeroAtmosphere reduced={reduced}/>
     <div className="poster-hero-content">
@@ -210,7 +211,7 @@ function App() {
   const [saved, setSaved] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
 
-  const path = location.pathname;
+  const path = location.pathname.replace(/\/+$/, '') || '/';
   const activeProduct = products.find((p) => path === `/products/${p.id}`);
 
   // Scroll to top on route change
@@ -484,7 +485,7 @@ function App() {
                   <Link to="/solutions" className="water-story-link">Explore the connection <ArrowUpRight size={20}/></Link>
                 </div>
                 <div className="water-visual" data-scroll="fade-left">
-                  <img src="/images/ponds.webp" alt="Aerial reference photograph of connected aquaculture ponds" width="600" height="400" loading="lazy"/>
+                  <img src={assetUrl('/images/ponds.webp')} alt="Aerial reference photograph of connected aquaculture ponds" width="600" height="400" loading="lazy"/>
                   <div className="water-photo-shade"/>
                   <div className="water-visual-caption"><Waves size={28}/><span>Air. Water.<br/>Movement.</span></div>
                   <span className="water-photo-credit">Reference photograph</span>
@@ -1074,7 +1075,7 @@ function Breadcrumb({ name }: { name: string }) {
   );
 }
 
-const router = createBrowserRouter([{ path: '*', element: <App /> }]);
+const router = createBrowserRouter([{ path: '*', element: <App /> }], { basename: import.meta.env.BASE_URL });
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RouterProvider router={router} />

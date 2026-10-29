@@ -35,3 +35,9 @@ The build outputs static files to `dist/`. Configure your host to serve `index.h
 This is a catalogue preview. Equipment renders and reference photographs are illustrative. Company statistics, product specifications, certification statements, warranty terms and policy copy require company verification before a public launch. The enquiry form downloads a local brief; it does not submit enquiries to a server. A verified contact endpoint must be integrated for lead delivery.
 
 Source files are in `src/`; images, fonts and video are in `public/`. The website planning document is included for project reference. Build output, dependencies, local hosting metadata, environment files and verification screenshots are excluded from version control.
+
+## GitHub Pages
+
+Live URL: https://suryavignesh06.github.io/Siri-aquatic/
+
+Pushes to main run the Pages workflow automatically. Run npm run build:pages locally to build for the repository subpath. The build generates direct-entry HTML files for the catalogue and information pages.

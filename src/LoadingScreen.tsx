@@ -1,3 +1,4 @@
+import { assetUrl } from './assets';
 import React, { useEffect, useState } from 'react';
 
 interface LoadingScreenProps {
@@ -75,7 +76,7 @@ export function LoadingScreen({ isLoading, onFinish }: LoadingScreenProps) {
 
           <div className="preloader-logo-card">
             <img
-              src="/siri-logo.png"
+              src={assetUrl('/siri-logo.png')}
               alt="Siri Aquatic Solutions emblem"
               className="preloader-logo-img"
               width={140}

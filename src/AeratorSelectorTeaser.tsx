@@ -1,3 +1,4 @@
+import { assetUrl } from './assets';
 import React,{useState} from 'react';
 import {Link} from 'react-router-dom';
 import {ArrowUpRight,Check,Ruler,Layers,PlugZap,Fish} from 'lucide-react';
@@ -12,7 +13,7 @@ export function AeratorSelectorTeaser(){
  const [choices,setChoices]=useState<Record<string,string>>({area:'2',depth:'1.5',phase:'3phase',species:'shrimp'});
  const label=(id:string)=>{const g=groups.find(g=>g.id===id);return g?.options.find(o=>o[0]===choices[id])?.[1]||''};
  const category=choices.area==='1'?'Compact aeration':choices.area==='5'?'Aeration & circulation':'Paddle wheel aeration';
- const image=choices.area==='1'?'/images/aerator-turbo2-cutout.png':'/images/aerator-pro4-cutout.png';
+ const image=choices.area==='1'?assetUrl('/images/aerator-turbo2-cutout.png'):assetUrl('/images/aerator-pro4-cutout.png');
  const query=new URLSearchParams({product:'paddle-wheel',area:label('area'),depth:label('depth'),phase:label('phase'),species:label('species')});
  return <section className="pond-planner" id="selector-tool" aria-labelledby="pond-planner-heading">
   <div className="pond-planner-inner">
