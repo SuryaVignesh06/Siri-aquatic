@@ -1,0 +1,36 @@
+.fish-current{position:relative;isolation:isolate;width:100%;height:108px;overflow:hidden;pointer-events:none;background:#fff;color:#007b86;contain:layout paint}
+.fish-current-line{position:absolute;left:5%;right:5%;top:50%;height:1px;background:linear-gradient(90deg,transparent,#01b8c833,transparent)}
+.fish-swimmer{position:absolute;left:0;top:20px;display:block;width:115px;height:58px;offset-path:none;animation:fishTravel 27s linear infinite;animation-play-state:paused;will-change:transform}
+.fish-swimmer svg{width:100%;height:100%;overflow:visible;animation:fishBob 3.7s ease-in-out infinite;animation-play-state:paused;transform:none}
+.fish-swimmer-1{width:85px;top:43px;animation-duration:32s;animation-delay:-13s;color:#b16a20}
+.fish-swimmer-2{width:66px;top:12px;animation-duration:29s;animation-delay:-23s;color:#007b86}
+.fish-tail{transform-box:fill-box;transform-origin:left center;animation:fishTail .85s ease-in-out infinite alternate;animation-play-state:paused}
+.fish-bubble{opacity:.4}
+.is-swimming .fish-swimmer,.is-swimming .fish-swimmer svg,.is-swimming .fish-tail{animation-play-state:running}
+.fish-current-compact{height:84px}.fish-current-compact .fish-swimmer{top:7px}.fish-current-compact .fish-swimmer-1{top:25px}.fish-current-compact .fish-swimmer-2{top:0}
+@keyframes fishTravel{from{transform:translateX(calc(100vw + 30px))}to{transform:translateX(-150px)}}
+@keyframes fishBob{0%,100%{transform:none translateY(0) rotate(-2deg)}50%{transform:none translateY(-6px) rotate(2deg)}}
+@keyframes fishTail{from{transform:scaleX(.8) skewY(-6deg)}to{transform:scaleX(1) skewY(6deg)}}
+.reduce-motion .fish-current .fish-swimmer,.reduce-motion .fish-current svg,.reduce-motion .fish-current .fish-tail{animation:none!important;will-change:auto}.reduce-motion .fish-swimmer{left:22%;transform:none}.reduce-motion .fish-swimmer-1{left:49%}.reduce-motion .fish-swimmer-2{left:75%}
+@media(prefers-reduced-motion:reduce){.fish-current .fish-swimmer,.fish-current svg,.fish-current .fish-tail{animation:none!important;will-change:auto}.fish-swimmer{left:22%;transform:none}.fish-swimmer-1{left:49%}.fish-swimmer-2{left:75%}}
+@media(max-width:600px){.fish-current{height:82px}.fish-swimmer{width:83px;top:15px}.fish-swimmer-1{width:64px;top:32px}.fish-swimmer-2{width:48px;top:5px}}
+/* An expanded range with consistent image frames, readable captions and contained elevation. */
+.product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px!important;align-items:stretch}
+.product-grid .product-card{display:flex;flex-direction:column;min-width:0;border:1px solid #e2ebeb;border-radius:22px;background:#fff;overflow:visible}
+.product-grid .product-art{position:relative;flex:none;width:100%;height:auto;aspect-ratio:1.32;padding:0;border-radius:21px 21px 0 0;overflow:hidden;background:#eef5f5}
+.product-grid .product-art .card-photo{width:100%;height:100%;position:absolute;inset:0;border-radius:0}
+.product-grid .product-art .product-cutout-photo{object-fit:contain!important;object-position:center!important;padding:48px 25px 30px;background:radial-gradient(ellipse at 50% 45%,#fff,#e5f2f3);filter:drop-shadow(0 12px 9px #10343d20)}
+.product-grid .tiny-label{font:500 11px/1.4 Poppins,sans-serif;color:#173b41;background:#ffffffed;max-width:calc(100% - 40px);white-space:normal}
+.product-grid .product-caption{padding:24px 22px;flex:1;gap:15px;align-items:flex-start}
+.product-grid .product-caption h3{font:500 clamp(21px,1.8vw,29px)/1.2 'DM Sans',sans-serif;letter-spacing:-.03em;color:#152a2f;margin-bottom:12px}
+.product-grid .product-caption p{font:400 15px/1.7 Poppins,sans-serif;color:#526469;max-width:340px}
+.product-grid .product-caption>span{font-size:12px;color:#8e5a23;padding-top:4px}
+.product-grid .product-card:focus-visible{outline:3px solid #c77a26;outline-offset:5px}
+.detail-art .product-cutout-photo{object-fit:contain!important;padding:55px!important;background:radial-gradient(ellipse,#fff,#e4f1f2)}
+@media(max-width:1050px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-grid .product-caption h3{font-size:24px}}
+@media(max-width:580px){.product-grid{grid-template-columns:1fr;gap:24px!important}.product-grid .product-caption{padding:22px}.product-grid .product-art{aspect-ratio:1.35}.product-grid .product-caption p{font-size:15px}}
+
+/* Remove the legacy loading sheet that was covering already-loaded product images. */
+.product-grid .product-art::after{display:none!important;content:none!important}
+.product-grid .product-art .card-photo{opacity:1;transform:none}
+@media(hover:hover){.product-grid .product-card:hover .card-photo{transform:scale(1.045)}}

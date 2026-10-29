@@ -1,0 +1,12 @@
+/* Surface-aware navigation; the glass stays clear while its contents change contrast. */
+header.calm-header[data-surface="light"]{--nav-ink:#11191b;--nav-line:#172c3238;--nav-hover:#11191b09}
+header.calm-header[data-surface="dark"]{--nav-ink:#fff;--nav-line:#ffffff66;--nav-hover:#ffffff16}
+header.calm-header.is-scrolled{background:linear-gradient(135deg,#ffffff40,#ffffff18)!important;backdrop-filter:blur(24px) saturate(1.15)!important;-webkit-backdrop-filter:blur(24px) saturate(1.15)!important;border:1px solid #ffffff70!important;box-shadow:0 8px 28px #14343b16,inset 0 1px 0 #ffffff60!important}
+header.calm-header[data-surface] nav a:not(.active),header.calm-header[data-surface] .icon-button,header.calm-header[data-surface] .header-quote{color:var(--nav-ink)!important;text-shadow:none!important;background:transparent!important;border-color:var(--nav-line)!important}
+header.calm-header[data-surface] nav a:not(.active):hover,header.calm-header[data-surface] .icon-button:hover{color:var(--nav-ink)!important;background:var(--nav-hover)!important}
+header.calm-header[data-surface] nav a.active,header.calm-header[data-surface] .header-quote:hover{background:#e29136!important;color:#142b2f!important;text-shadow:none!important}
+header.calm-header[data-surface] .brand,header.calm-header[data-surface] .brand svg image{filter:none!important;mix-blend-mode:normal!important;opacity:1!important}
+header.calm-header[data-surface="light"] .brand svg{filter:none!important;mix-blend-mode:normal!important;opacity:1!important}
+header.calm-header[data-surface="dark"] .brand svg{filter:url('#siri-logo-dark')!important;mix-blend-mode:normal!important;opacity:1!important}
+@media(max-width:960px){header.calm-header[data-surface="light"] nav.open{background:#fffffff2!important;backdrop-filter:blur(24px)!important}header.calm-header[data-surface="dark"] nav.open{background:#10282ef0!important;backdrop-filter:blur(24px)!important}}
+@supports not (backdrop-filter:blur(1px)){header.calm-header.is-scrolled[data-surface="light"]{background:#fffffff5!important}header.calm-header.is-scrolled[data-surface="dark"]{background:#122a30f5!important}}

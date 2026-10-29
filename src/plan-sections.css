@@ -1,0 +1,732 @@
+/* ==========================================================================
+   SIRI AQUATIC — PLAN v1.2 DESIGN TOKENS & SECTIONS
+   Tokens from Section 1.2, Trust Strip (H2), Categories (H3),
+   Selector Teaser (H7), Floating WhatsApp (5.3) & Transitions (9.3)
+   ========================================================================== */
+
+:root {
+  --ink: #111111;
+  --teal: #01B8C8;
+  --orange: #E29136;
+  --teal-ink: #006674;
+  --teal-text: #007A87;
+  --orange-ink: #A85F12;
+  --deep: #0B2E36;
+  --deep-2: #0F4A57;
+  --abyss: #06191E;
+  --aqua-glow: #1FD1E0;
+  --aqua-soft: #8FF0F7;
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-line: rgba(255, 255, 255, 0.10);
+  --cream: #EAE6E2;
+  --mist: #F4FAFB;
+  --line: #D6E6E9;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ==========================================================================
+   H2: TRUST STRIP SHEET SLIDE-OVER (SECTION 6.1 H2, SECTION 9.3)
+   ========================================================================== */
+.trust-strip-sheet {
+  position: relative;
+  background: #ffffff;
+  color: var(--ink);
+  padding: 85px 5% 70px;
+  border-radius: 40px 40px 0 0;
+  margin-top: -30px;
+  box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+  isolation: isolate;
+}
+
+.trust-strip-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+}
+
+.trust-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.trust-stat-cell {
+  padding: 24px 20px;
+  border-left: 3px solid var(--teal);
+  background: var(--mist);
+  border-radius: 0 16px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+.trust-stat-cell:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(1, 184, 200, 0.12);
+}
+
+.trust-stat-num {
+  font-family: 'Poppins', 'DM Sans', sans-serif;
+  font-size: clamp(38px, 3.6vw, 54px);
+  font-weight: 900;
+  color: var(--teal-ink);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.trust-stat-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.trust-stat-sub {
+  font-size: 12px;
+  color: #556669;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.trust-cert-banner {
+  background: linear-gradient(90deg, #f0f7f8 0%, #e9f5f7 100%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.cert-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--teal-ink);
+}
+
+.cert-shield-icon {
+  color: var(--teal);
+}
+
+.cert-items-row {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.cert-item-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cert-check-icon {
+  color: var(--teal);
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: 0 2px 6px rgba(1, 184, 200, 0.2);
+}
+
+.cert-item-chip strong {
+  display: block;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.cert-item-chip small {
+  display: block;
+  font-size: 10px;
+  color: #6a7c80;
+}
+
+/* ==========================================================================
+   H7: INTERACTIVE AERATOR SELECTOR TEASER (SECTION 6.1 H7)
+   ========================================================================== */
+.selector-teaser-section {
+  position: relative;
+  background: #ffffff;
+  padding: 95px 5%;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.selector-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.selector-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 50px;
+}
+
+.selector-header h2 {
+  font-family: 'Poppins', 'DM Sans', sans-serif;
+  font-size: clamp(32px, 3.2vw, 48px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 14px 0 16px;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.selector-header p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #556669;
+  margin: 0;
+}
+
+.selector-card-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 38px 44px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.04);
+}
+
+.selector-inputs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.selector-inputs-col .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selector-inputs-col label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--teal-ink);
+}
+
+.pill-choice-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.selector-choice-btn {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 10px 18px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selector-choice-btn:hover {
+  border-color: var(--teal);
+  background: #f7fcfd;
+}
+
+.selector-choice-btn.is-selected {
+  background: var(--deep);
+  color: #ffffff;
+  border-color: var(--deep);
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(11, 46, 54, 0.25);
+}
+
+/* Selector Output Column */
+.selector-output-col {
+  background: var(--deep);
+  color: #ffffff;
+  border-radius: 22px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 15px 40px rgba(11, 46, 54, 0.35);
+}
+
+.output-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--aqua-glow);
+  text-transform: uppercase;
+}
+
+.rec-aerator-title {
+  font-family: 'Poppins', 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+  margin: 14px 0 20px;
+}
+
+.rec-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.rec-spec-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.spec-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--aqua-glow);
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px var(--aqua-glow);
+}
+
+.rec-spec-item strong {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.rec-spec-item p {
+  font-size: 13px;
+  color: #ffffff;
+  margin: 2px 0 0;
+  line-height: 1.45;
+}
+
+.selector-cta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selector-quote-btn {
+  background: var(--teal) !important;
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+  border-radius: 99px !important;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(1, 184, 200, 0.35);
+  transition: all 0.25s ease;
+}
+
+.selector-quote-btn:hover {
+  background: #4ff2ff !important;
+  transform: translateY(-2px);
+}
+
+.selector-disclaimer {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ==========================================================================
+   FLOATING ACTION CLUSTER: WHATSAPP (SECTION 5.3)
+   ========================================================================== */
+.floating-whatsapp-cluster {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.whatsapp-tooltip-card {
+  pointer-events: auto;
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px 18px 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--line);
+  animation: tooltipFloat 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tooltip-close-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #eeeeee;
+  border: 1px solid #cccccc;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #444444;
+}
+
+.tooltip-avatar {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.online-indicator {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff66;
+  border: 2px solid #ffffff;
+}
+
+.tooltip-text strong {
+  display: block;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.tooltip-text small {
+  display: block;
+  font-size: 10px;
+  color: #25d366;
+  font-weight: 600;
+}
+
+.whatsapp-fab-button {
+  pointer-events: auto;
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  text-decoration: none;
+}
+
+.whatsapp-fab-button:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+}
+
+.fab-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid #25d366;
+  opacity: 0.8;
+  animation: fabPulse 2.4s ease-out infinite;
+}
+
+@keyframes fabPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes tooltipFloat {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+@media (max-width: 900px) {
+  .trust-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .selector-card-split {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .cert-items-row {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .trust-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .floating-whatsapp-cluster {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* ==========================================================================
+   HERO CTA CLUSTER (SECTION 7.5 & SECTION 1.2 BUTTON CONTRAST RULE)
+   ========================================================================== */
+.hero-cta-cluster {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.hero-primary-btn {
+  background: var(--teal) !important;
+  color: var(--ink) !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  border-radius: 9999px !important;
+  padding: 14px 28px !important;
+  min-height: 48px;
+  box-shadow: 0 4px 20px rgba(1, 184, 200, 0.4) !important;
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
+  text-decoration: none;
+}
+
+.hero-primary-btn:hover {
+  background: var(--aqua-glow) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(31, 209, 224, 0.5) !important;
+}
+
+.hero-secondary-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 9999px !important;
+  padding: 14px 26px !important;
+  min-height: 48px;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none;
+}
+
+.hero-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.28) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+}
+
+.hero-whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff !important;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.hero-whatsapp-link:hover {
+  background: rgba(37, 211, 102, 0.22);
+  border-color: rgba(37, 211, 102, 0.6);
+  color: #25d366 !important;
+  transform: translateY(-1px);
+}
+
+.whatsapp-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #25d366;
+  box-shadow: 0 0 10px #25d366;
+  display: inline-block;
+}
+
+/* ==========================================================================
+   SECTION-BREAK MINI-MARK (PLAN SECTION 10.3 B)
+   120-160px divider: teal line with small wheel at centre turning 360deg
+   ========================================================================== */
+.section-break-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  max-width: 280px;
+  margin: 40px auto;
+  opacity: 0.9;
+  overflow: visible;
+}
+
+.break-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--teal) 100%);
+  transform-origin: right center;
+  transition: transform 0.9s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.break-line-right {
+  background: linear-gradient(90deg, var(--teal) 0%, transparent 100%);
+  transform-origin: left center;
+}
+
+.break-mini-wheel {
+  width: 32px;
+  height: 32px;
+  color: var(--teal);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: transform 1.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.mini-wheel-svg {
+  width: 100%;
+  height: 100%;
+  animation: wheelSpinSlow 24s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes wheelSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.section-break-divider.is-revealed .break-mini-wheel {
+  transform: rotate(360deg);
+}
+
+.section-break-divider.is-revealed .break-line {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   DESKTOP SECTION DOTS (PLAN SECTION 9.4)
+   Fixed right-side dots with tooltips; click scrolls smoothly; current dot grows
+   ========================================================================== */
+.desktop-section-dots {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+@media (max-width: 1024px) {
+  .desktop-section-dots {
+    display: none !important;
+  }
+}
+
+.section-nav-dot {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+.dot-circle {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(1, 184, 200, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.section-nav-dot:hover .dot-circle {
+  background: var(--aqua-glow);
+  transform: scale(1.3);
+  box-shadow: 0 0 10px var(--aqua-glow);
+}
+
+.section-nav-dot.is-active .dot-circle {
+  width: 13px;
+  height: 13px;
+  background: var(--aqua-glow);
+  border-color: #ffffff;
+  box-shadow: 0 0 14px var(--aqua-glow), 0 0 24px rgba(31, 209, 224, 0.5);
+}
+
+.dot-tooltip {
+  position: absolute;
+  right: 28px;
+  background: rgba(3, 22, 28, 0.88);
+  color: #ffffff;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section-nav-dot:hover .dot-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+

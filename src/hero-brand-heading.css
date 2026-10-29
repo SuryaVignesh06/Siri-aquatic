@@ -1,0 +1,51 @@
+/* The supplied logo's exact extended geometric lettering, enlarged for the hero. */
+.poster-hero .poster-heading h1.hero-brand-heading{display:block;width:min(100%,1120px);max-width:100%;margin:0 auto!important;padding:0;font-size:0!important;line-height:0!important;letter-spacing:0!important;white-space:normal;-webkit-text-stroke:0!important;text-shadow:none}.hero-brand-art{display:block;width:100%;height:auto;aspect-ratio:565/105;overflow:hidden;filter:drop-shadow(0 4px 16px #00151935)}.poster-hero .poster-heading{padding-left:5%;padding-right:5%;width:100%;max-width:1440px;margin:0 auto}.poster-hero .poster-eyebrow{margin-bottom:24px}.poster-hero-content{gap:12px}
+@media(min-width:1600px){.poster-hero .poster-heading h1.hero-brand-heading{width:min(100%,1370px)}}
+@media(max-width:640px){.poster-hero .poster-heading{padding:0 25px}.poster-hero .poster-eyebrow{margin-bottom:25px}.poster-hero .poster-heading h1.hero-brand-heading{width:100%;font-size:0!important;line-height:0!important}.poster-hero-content{gap:20px}.hero-brand-art{filter:drop-shadow(0 3px 12px #00151930)}}
+/* Keep the supplied geometric wordmark crisp in front of the moving footage. */
+.poster-hero .poster-heading{isolation:isolate;z-index:5}
+.poster-hero .poster-heading:before{content:'';position:absolute;inset:-22px 2% -24px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse,#00141ba6 0%,#00141b55 48%,transparent 73%);filter:blur(18px)}
+.poster-hero .poster-heading .hero-brand-art{opacity:1!important;mix-blend-mode:normal!important;filter:drop-shadow(0 2px 1px #00141b99) drop-shadow(0 5px 12px #00141b80)}
+.poster-hero .poster-eyebrow{color:#ffb45d;text-shadow:0 2px 7px #0009;font-weight:600}
+/* Native paths stay sharp on wide and high-density displays. */
+.poster-hero .poster-heading svg.hero-vector-wordmark{color:#fff;aspect-ratio:1200/210;filter:none!important;overflow:visible;shape-rendering:geometricPrecision;transform:none!important}
+.poster-hero .poster-heading:before{inset:-16px -1% -18px;background:radial-gradient(ellipse,#00131bc4 0%,#00131b75 50%,transparent 76%);filter:blur(15px)}
+@media(min-width:1101px){
+ .equipment-gallery{box-sizing:border-box;height:100svh;min-height:690px;max-height:none;padding:110px clamp(28px,4vw,88px) 26px;scroll-margin-top:0}
+ .gallery-layout{height:100%;min-height:0;align-items:stretch}
+ .gallery-left,.gallery-right,.gallery-center{min-height:0}
+ .gallery-headline{font-size:clamp(32px,3vw,48px);margin:10px 0 20px}
+ .gallery-details{padding:20px;gap:16px}
+ .gallery-title-card,.gallery-main-info{padding:20px}
+ .gallery-right{gap:16px}
+ .gallery-image-stage{max-height:none;min-height:0}
+ .gallery-product-image{width:106%;height:100%;object-fit:contain}
+ .gallery-product-2{width:95%}
+ .gallery-switcher{max-width:450px}
+ .gallery-product-tabs>button{min-height:88px;padding:6px 5px 12px}
+ .gallery-product-tabs img{height:48px}
+ .gallery-wave{height:44px;margin:8px 0}
+ .gallery-title-card h3{font-size:clamp(20px,1.8vw,28px)}
+ .gallery-info-grid>div{padding:10px;gap:6px}
+ .gallery-info-grid strong{font-size:clamp(16px,1.4vw,22px)}
+ .gallery-stat{padding-top:14px;margin-top:14px}
+ .gallery-stat>span{font-size:clamp(35px,3vw,48px)}
+ .gallery-stat small{display:none}
+}
+@media(min-width:1101px) and (max-height:780px){
+ .equipment-gallery{min-height:640px;padding-top:104px;padding-bottom:20px}
+ .gallery-headline{font-size:32px;margin-bottom:15px}
+ .gallery-details{gap:13px;padding:17px}
+ .gallery-caption{font-size:13px}
+ .gallery-specs{gap:13px}.gallery-specs dd{font-size:12px}
+ .gallery-feature{padding-top:12px}.gallery-feature p{display:none}
+ .gallery-title-card,.gallery-main-info{padding:17px}
+ .gallery-main-info h4{margin-bottom:12px;font-size:23px}
+ .gallery-title-card h3{font-size:21px;margin:8px 0}
+ .gallery-wave{height:32px}
+ .gallery-info-grid svg{height:20px;width:20px}
+ .gallery-stat p{margin-top:8px;font-size:10px}
+ .gallery-product-tabs>button{min-height:80px}.gallery-product-tabs img{height:42px}
+}
+@media(min-width:1101px) and (max-height:639px){.equipment-gallery{height:auto;min-height:640px}}
+@media(min-width:1101px){.equipment-gallery{scroll-margin-top:-110px}}
