@@ -1,0 +1,219 @@
+/* ==========================================================================
+   PROBIOTICS PAGE — CLEAN SITE-CONSISTENT CANVAS & GLASSMORPHISM CARDS
+   ========================================================================== */
+
+.probiotics-world {
+  background: #ffffff;
+  padding-bottom: 84px;
+}
+
+.probiotics-shell {
+  max-width: 1380px;
+  margin: 0 auto;
+}
+
+.probiotics-hero-header {
+  margin-bottom: 40px;
+}
+
+.probiotics-hero-header .breadcrumb {
+  margin-bottom: 36px;
+}
+
+.probiotics-hero-header .eyebrow {
+  margin-bottom: 18px;
+}
+
+/* 3-Column Side-by-Side Glassmorphism Product Cards */
+.probiotics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+
+.probiotic-glass-card {
+  scroll-margin-top: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px 22px;
+  border-radius: 26px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(242, 249, 251, 0.78) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid #e1ecee;
+  border-top-color: #ffffff;
+  box-shadow:
+    0 12px 30px -12px rgba(13, 46, 56, 0.10),
+    0 2px 6px rgba(13, 46, 56, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.probiotic-glass-card:hover {
+  transform: translateY(-4px);
+  border-color: #c5e2e8;
+  box-shadow:
+    0 20px 40px -14px rgba(13, 46, 56, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Top Row: Thumbnail + Header + Circular Arrow */
+.probiotic-card-top {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr) 36px;
+  gap: 14px;
+  align-items: start;
+}
+
+.probiotic-thumb {
+  width: 86px;
+  height: 98px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #edf7fa;
+  border: 1px solid #dcebef;
+  box-shadow: 0 6px 14px rgba(8, 45, 60, 0.08);
+}
+
+.probiotic-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.probiotic-head-text {
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.probiotic-series-tag {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #007d8e;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.probiotic-head-text h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+  color: #0e242c;
+  margin: 0 0 6px;
+}
+
+.probiotic-head-text p {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #4b626a;
+  margin: 0;
+}
+
+.probiotic-circle-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: #0f2c36;
+  border: 1px solid #dce8eb;
+  box-shadow: 0 4px 12px rgba(8, 42, 56, 0.07);
+  transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+}
+
+.probiotic-circle-arrow:hover {
+  background: #01b8c8;
+  border-color: #01b8c8;
+  color: #05262c;
+  transform: translate(1px, -1px);
+}
+
+/* Middle Row: 3 Brochure Icon Highlights */
+.probiotic-highlights-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.probiotic-hl-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.probiotic-hl-item svg {
+  color: #193742;
+  flex-shrink: 0;
+}
+
+.probiotic-hl-item span {
+  font-size: 11.5px;
+  line-height: 1.28;
+  font-weight: 500;
+  color: #213c46;
+}
+
+/* Bottom Row: Dosage | Ingredients Split */
+.probiotic-bottom-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e6eff1;
+}
+
+.probiotic-bottom-split > div:last-child {
+  padding-left: 14px;
+  border-left: 1px solid #e6eff1;
+}
+
+.probiotic-bottom-split span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: #536b74;
+  margin-bottom: 5px;
+}
+
+.probiotic-bottom-split p {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #18323b;
+  margin: 0;
+}
+
+@media (max-width: 1180px) {
+  .probiotics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .probiotics-world {
+    padding-bottom: 64px;
+  }
+  .probiotics-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .probiotic-glass-card {
+    padding: 18px;
+  }
+}

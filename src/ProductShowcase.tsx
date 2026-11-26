@@ -1,7 +1,7 @@
 import { assetUrl } from './assets';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Gauge, Weight, Cable, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Gauge, Weight, Cable, ShieldCheck, Play, Pause } from 'lucide-react';
 import './glass-gallery.css';
 
 interface ShowcaseProduct {
@@ -9,7 +9,6 @@ interface ShowcaseProduct {
   name: string;
   subtitle: string;
   tagline: string;
-  h2Headline: string;
   caption: string;
   image: string;
   alt: string;
@@ -32,24 +31,22 @@ interface ShowcaseProduct {
     label: string;
     standard: string;
   };
-  thumbs: string[];
 }
 
 const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'paddle-wheel',
-    name: 'SIRI PRO-4 PADDLE AERATOR',
+    name: 'Pro-4 Paddle Aerator',
     subtitle: 'Surface Aeration System',
     tagline: 'Oxygen, delivered.',
-    h2Headline: 'AERATION THAT NEVER SLEEPS.',
-    caption: 'Engineered for relentless 24/7 dissolved oxygen enrichment with high-torque copper motors and reinforced bevel gearboxes.',
-    image: assetUrl('/images/aerator-pro4-cutout.png'),
-    alt: 'Siri Pro-4 heavy duty commercial paddle wheel aerator for aquaculture ponds',
-    featureChip: 'SS-304 SUBFRAME',
-    featureDesc: 'Marine-grade anti-corrosion chassis with UV-stabilized virgin HDPE floats',
+    caption: 'Four-paddle surface aeration with a sealed protective drive cover, thoughtfully configured around your pond.',
+    image: assetUrl('/images/aerator-4paddle-real.png'),
+    alt: '4-paddle wheel aerator with sealed blue drive hood and three virgin HDPE floats',
+    featureChip: 'SEALED DRIVE HOOD',
+    featureDesc: 'Marine-grade SS-304 frame with UV-stabilized virgin HDPE floats and weather-sealed gearbox cover',
     specs: {
-      type: 'Surface Paddle Wheel',
-      coverage: 'Up to 1.5 Hectares',
+      type: '4-Paddle Wheel',
+      coverage: 'Up to 1.2 Hectares',
       powerSupply: '3-Phase / 415V / 50Hz',
       operatingMode: 'Continuous Duty S1'
     },
@@ -63,27 +60,20 @@ const showcaseProducts: ShowcaseProduct[] = [
       value: '2.4 kg O₂/h',
       label: 'Standard Oxygen Transfer Rate (SOTR)',
       standard: 'Tested per ASCE standard guidelines'
-    },
-    thumbs: [
-      assetUrl('/images/aerator-pro4-cutout.png'),
-      assetUrl('/hero.webp'),
-      assetUrl('/images/ponds.webp'),
-      assetUrl('/images/pump.webp')
-    ]
+    }
   },
   {
-    id: 'turbo-2',
-    name: 'SIRI TURBO-2 COMPACT AERATOR',
-    subtitle: 'Rapid Dissolved Oxygen Booster for Nursery Ponds',
+    id: 'compact-aerator',
+    name: 'Turbo-2 Compact Aerator',
+    subtitle: 'Rapid Dissolved Oxygen Booster',
     tagline: 'Power in every pulse.',
-    h2Headline: 'HIGH VELOCITY. COMPACT FOOTPRINT.',
-    caption: 'Specially configured for post-larvae nursery ponds, circular biofloc tanks and precision circulation corners.',
-    image: assetUrl('/images/aerator-turbo2-cutout.png'),
-    alt: 'Siri Turbo-2 compact two paddle aerator for shrimp nurseries',
+    caption: 'Compact twin-paddle aeration for nursery ponds, smaller spaces and flexible circulation layouts.',
+    image: assetUrl('/images/aerator-2paddle-real.png'),
+    alt: '2-paddle compact wheel aerator with twin floats and yellow impellers',
     featureChip: 'HIGH-TORQUE MOTOR',
     featureDesc: 'IP55 moisture-sealed motor winding with integrated thermal overload protection',
     specs: {
-      type: 'Compact 2-Paddle Wheel',
+      type: 'Compact 2-Paddle',
       coverage: 'Up to 0.6 Hectares',
       powerSupply: '1-Phase 230V / 3-Phase 415V',
       operatingMode: 'High Velocity Circulation'
@@ -98,28 +88,21 @@ const showcaseProducts: ShowcaseProduct[] = [
       value: '1.6 kg O₂/h',
       label: 'Transfer Efficiency in Nursery Ponds',
       standard: 'Verified under saline brackish water tests'
-    },
-    thumbs: [
-      assetUrl('/images/aerator-turbo2-cutout.png'),
-      assetUrl('/hero.webp'),
-      assetUrl('/images/pump.webp'),
-      assetUrl('/images/ponds.webp')
-    ]
+    }
   },
   {
     id: 'spiral-impeller',
-    name: 'SIRI SPIRAL-FLOW DEEP IMPELLER',
-    subtitle: 'Subsurface Destratification Wavemaker',
+    name: 'Surge Impeller Aerator',
+    subtitle: 'Subsurface Destratification Pump',
     tagline: 'Deep water renewed.',
-    h2Headline: 'DEEP CIRCULATION. ZERO DEAD ZONES.',
-    caption: 'Helical turbine lifts bottom anaerobic sludge, prevents temperature stratification and aerates the pond bottom floor.',
-    image: assetUrl('/images/aerator-spiral-cutout.png'),
-    alt: 'Siri Spiral-Flow subsurface helical impeller wave aerator',
-    featureChip: 'HELICAL TURBINE',
-    featureDesc: 'Hydrodynamically balanced marine bronze spiral blade with cavitation guard',
+    caption: 'Floating impeller circulation that lifts deep bottom water, reduces stratification and refreshes the pond floor.',
+    image: assetUrl('/images/aerator-impeller-real.png'),
+    alt: 'Floating impeller aerator with circular blue float ring and stainless steel intake strainer',
+    featureChip: 'SS INTAKE STRAINER',
+    featureDesc: 'Circular HDPE float ring paired with perforated stainless intake screen and corrosion-proof drive',
     specs: {
-      type: 'Subsurface Spiral Impeller',
-      coverage: 'Up to 2.0 Hectares',
+      type: 'Subsurface Impeller',
+      coverage: 'Up to 1.5 Hectares',
       powerSupply: '3-Phase / 415V',
       operatingMode: 'Continuous Upwelling'
     },
@@ -133,69 +116,322 @@ const showcaseProducts: ShowcaseProduct[] = [
       value: '98.4%',
       label: 'Pond Bottom Oxygenation Coverage',
       standard: 'Zero dead zone velocity verification'
+    }
+  },
+  {
+    id: 'pro-6-paddle',
+    name: 'Pro-6 Heavy-Duty Aerator',
+    subtitle: 'High-Density Culture Aeration',
+    tagline: 'Built wider. Stronger flow.',
+    caption: 'Six high-efficiency perforated paddles on a central gearbox shaft for demanding high-stocking ponds.',
+    image: assetUrl('/images/aerator-6paddle-real.png'),
+    alt: '6-paddle wheel aerator with central vertical motor, gearbox and four blue floats',
+    featureChip: 'CENTRE GEARBOX DRIVE',
+    featureDesc: 'Balanced multi-float HDPE chassis with open-cooling vertical motor and reinforced spline couplings',
+    specs: {
+      type: '6-Paddle Wheel',
+      coverage: 'Up to 1.8 Hectares',
+      powerSupply: '3-Phase / 415V / 50Hz',
+      operatingMode: 'Heavy-Duty Continuous'
     },
-    thumbs: [
-      assetUrl('/images/aerator-spiral-cutout.png'),
-      assetUrl('/images/pump.webp'),
-      assetUrl('/hero.webp'),
-      assetUrl('/images/ponds.webp')
-    ]
+    mainInfo: {
+      power: '3.0 HP / 2.2 kW',
+      weight: '112 kg',
+      supply: '3-Phase 415V',
+      warranty: '24 Months'
+    },
+    bigStat: {
+      value: '3.2 kg O₂/h',
+      label: 'High-Density Pond Transfer Rate',
+      standard: 'Balanced multi-float stability in coastal winds'
+    }
+  },
+  {
+    id: 'max-8-paddle',
+    name: 'Max-8 Commercial Aerator',
+    subtitle: 'Wide-Span Grow-Out System',
+    tagline: 'Maximum reach. Calm control.',
+    caption: 'Eight-paddle long-span surface aerator built across five floats to sustain oxygen across large ponds.',
+    image: assetUrl('/images/aerator-8paddle-real.png'),
+    alt: '8-paddle long-span commercial aerator with five blue floats and yellow paddle wheels',
+    featureChip: '5-FLOAT STABILITY',
+    featureDesc: 'Extended SS-304 twin-rail frame across five virgin HDPE pontoons for uniform full-pond currents',
+    specs: {
+      type: '8-Paddle Long-Span',
+      coverage: 'Up to 2.5 Hectares',
+      powerSupply: '3-Phase / 415V / 50Hz',
+      operatingMode: 'Commercial Grow-Out'
+    },
+    mainInfo: {
+      power: '3.0–5.0 HP',
+      weight: '142 kg',
+      supply: '3-Phase 415V',
+      warranty: '24 Months'
+    },
+    bigStat: {
+      value: '4.1 kg O₂/h',
+      label: 'Wide-Span Surface Oxygenation',
+      standard: 'Designed for large-acreage aquaculture farms'
+    }
   }
 ];
 
-const titles=['Pro-4 Paddle Aerator','Turbo-2 Compact Aerator','Spiral-Flow Impeller'];
-const headlines=[['Every ripple.','New possibility.'],['Small footprint.','Room to grow.'],['Go deeper.','Keep things moving.']];
-const units=['Paddle wheel','Compact aeration','Deep circulation'];
+const headlines = [
+  ['Every ripple.', 'New possibility.'],
+  ['Small footprint.', 'Room to grow.'],
+  ['Go deeper.', 'Keep things moving.'],
+  ['Built wider.', 'Stronger flow.'],
+  ['Maximum reach.', 'Calm control.']
+];
 
-export function ProductShowcase(){
- const [active,setActive]=useState(0);
- const tabs=useRef<HTMLDivElement>(null);
- const product=showcaseProducts[active];
- const change=(index:number)=>setActive((index+showcaseProducts.length)%showcaseProducts.length);
- const info=[{Icon:Weight,label:'Weight',value:product.mainInfo.weight},{Icon:Gauge,label:'Power',value:product.mainInfo.power},{Icon:Cable,label:'Power supply',value:product.mainInfo.supply},{Icon:ShieldCheck,label:'Warranty',value:product.mainInfo.warranty}];
- return <section className="equipment-gallery" id="showcase" aria-label="Explore aeration equipment">
-   <div className="gallery-environment" aria-hidden="true"><img className="gallery-backdrop-photo" src={assetUrl('/images/gallery-backdrop.webp')} alt="" width="1536" height="1024" loading="lazy"/><span className="gallery-light gallery-light-aqua"/><span className="gallery-light gallery-light-amber"/><span className="gallery-floor"/></div>
-   <div className="gallery-layout">
-     <div className="gallery-left" data-scroll="fade-up">
-       <span className="gallery-eyebrow">IN OUR ELEMENT / 0{active+1}</span>
-       <h2 className="gallery-headline" key={`headline-${active}`}>{headlines[active].map(line=><span key={line}>{line}</span>)}</h2>
-       <div className="gallery-glass gallery-details" key={`details-${active}`}>
-         <p className="gallery-caption">{["Surface aeration, thoughtfully configured around your pond.","Compact aeration for smaller spaces and flexible layouts.","Explore circulation below the surface with a spiral impeller."][active]}</p>
-         <dl className="gallery-specs">
-           {[['Type',product.specs.type],['Coverage',product.specs.coverage],['Power supply',product.specs.powerSupply],['Operating mode',product.specs.operatingMode]].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
-         </dl>
-         <div className="gallery-feature"><div><span>A closer look</span><strong>{product.featureChip}</strong></div><p>{product.featureDesc}</p></div>
-         <Link to="/products/paddle-wheel" className="gallery-cta">Explore the equipment <ArrowUpRight size={20} strokeWidth={1.6}/></Link>
-         <Link to="/request-a-quote?product=paddle-wheel" className="gallery-enquire">Talk about your pond <ArrowRight size={16} strokeWidth={1.6}/></Link>
-       </div>
-     </div>
-     <div className="gallery-center">
-       <div className="gallery-image-stage" aria-live="polite">
-         <div className="gallery-image-halo" aria-hidden="true"/>
-         <img key={product.image} src={product.image} alt={product.alt} className={`gallery-product-image gallery-product-${active}`} width="1024" height="1024" decoding="async"/>
-         <span className="gallery-contact-shadow" aria-hidden="true"/>
-       </div>
-       <div className="gallery-switcher">
-         <div className="gallery-switcher-top"><span>Find your flow</span><div><button type="button" aria-label="Previous product" onClick={()=>change(active-1)}><ArrowLeft size={18} strokeWidth={1.5}/></button><span className="gallery-counter">0{active+1} <i>/ 03</i></span><button type="button" aria-label="Next product" onClick={()=>change(active+1)}><ArrowRight size={18} strokeWidth={1.5}/></button></div></div>
-         <div ref={tabs} className="gallery-product-tabs" role="tablist" aria-label="Choose equipment" onKeyDown={e=>{let next=active;if(e.key==='ArrowRight')next=(active+1)%3;else if(e.key==='ArrowLeft')next=(active+2)%3;else if(e.key==='Home')next=0;else if(e.key==='End')next=2;else return;e.preventDefault();change(next);tabs.current?.querySelectorAll<HTMLButtonElement>('[role=tab]')[next]?.focus()}}>
-           {showcaseProducts.map((item,index)=><button key={item.id} type="button" role="tab" id={`equipment-tab-${index}`} aria-selected={active===index} aria-controls="equipment-info" tabIndex={active===index?0:-1} className={active===index?'selected':''} onClick={()=>change(index)}><img src={item.image} alt="" width="88" height="70" loading="lazy"/><span>{units[index]}</span><span className="gallery-selection-dot" aria-hidden="true"/></button>)}
-         </div>
-       </div>
-     </div>
-     <div className="gallery-right" id="equipment-info" role="tabpanel" aria-labelledby={`equipment-tab-${active}`}>
-       <div className="gallery-glass gallery-title-card" key={`title-${active}`}>
-         <span className="gallery-eyebrow">{product.specs.type}</span>
-         <h3>{titles[active]}</h3><p>{product.tagline}</p>
-         <svg className="gallery-wave" viewBox="0 0 350 90" aria-hidden="true">{[0,1,2,3,4].map(i=><path key={i} d={`M0 ${45+i*2} C55 ${5+i*6},75 ${85-i*4},130 45 S205 ${5+i*7},260 45 S315 ${85-i*6},350 45`} fill="none" stroke="currentColor" strokeWidth={i===2?1.4:.65} opacity={1-i*.12}/>)}</svg>
-         <span className="gallery-title-caption">Quality comes first. In every detail.</span>
-       </div>
-       <div className="gallery-glass gallery-main-info" key={`info-${active}`}>
-         <h4>The details</h4>
-         <div className="gallery-info-grid">{info.map(({Icon,label,value})=><div key={label}><Icon size={26} strokeWidth={1.35} aria-hidden="true"/><span>{label}</span><strong>{value}</strong></div>)}</div>
-         <div className="gallery-stat"><span>{product.bigStat.value}</span><p>{product.bigStat.label}</p><small>{product.bigStat.standard}</small></div>
-       </div>
-     </div>
-   </div>
- </section>;
+const units = ['4-Paddle', '2-Paddle', 'Impeller', '6-Paddle', '8-Paddle'];
+
+export function ProductShowcase() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [reduced, setReduced] = useState(
+    () =>
+      typeof document !== 'undefined' &&
+      (document.documentElement.classList.contains('reduce-motion') ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  );
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const tabs = useRef<HTMLDivElement>(null);
+  const count = showcaseProducts.length;
+  const product = showcaseProducts[active];
+  const change = (index: number) => setActive((index + count) % count);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotion = () => {
+      setReduced(document.documentElement.classList.contains('reduce-motion') || mq.matches);
+    };
+    syncMotion();
+    mq.addEventListener('change', syncMotion);
+    const mo = new MutationObserver(syncMotion);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => {
+      mq.removeEventListener('change', syncMotion);
+      mo.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+    const io = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { threshold: 0.15 });
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (paused || interacting || !isVisible || reduced) return;
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % count);
+    }, 4500);
+    return () => window.clearInterval(timer);
+  }, [paused, interacting, isVisible, reduced, count]);
+
+  const info = [
+    { Icon: Weight, label: 'Weight', value: product.mainInfo.weight },
+    { Icon: Gauge, label: 'Power', value: product.mainInfo.power },
+    { Icon: Cable, label: 'Power supply', value: product.mainInfo.supply },
+    { Icon: ShieldCheck, label: 'Warranty', value: product.mainInfo.warranty }
+  ];
+
+  const isPlaying = !paused && !interacting && isVisible && !reduced;
+
+  return (
+    <section
+      ref={sectionRef}
+      className="equipment-gallery"
+      id="showcase"
+      aria-label="Explore aeration equipment slideshow"
+      onMouseEnter={() => setInteracting(true)}
+      onMouseLeave={() => setInteracting(false)}
+      onFocusCapture={() => setInteracting(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setInteracting(false);
+      }}
+    >
+      <div className="gallery-environment" aria-hidden="true">
+        <img
+          className="gallery-backdrop-photo"
+          src={assetUrl('/images/gallery-backdrop.webp')}
+          alt=""
+          width="1536"
+          height="1024"
+          loading="lazy"
+        />
+        <span className="gallery-light gallery-light-aqua" />
+        <span className="gallery-light gallery-light-amber" />
+        <span className="gallery-floor" />
+      </div>
+
+      <div className="gallery-layout">
+        <div className="gallery-left">
+          <span className="gallery-eyebrow">IN OUR ELEMENT / 0{active + 1}</span>
+          <h2 className="gallery-headline" key={`headline-${active}`}>
+            {headlines[active].map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </h2>
+          <div className="gallery-glass gallery-details" key={`details-${active}`}>
+            <p className="gallery-caption">{product.caption}</p>
+            <dl className="gallery-specs">
+              {[
+                ['Type', product.specs.type],
+                ['Coverage', product.specs.coverage],
+                ['Power supply', product.specs.powerSupply],
+                ['Operating mode', product.specs.operatingMode]
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="gallery-feature">
+              <div>
+                <span>A closer look</span>
+                <strong>{product.featureChip}</strong>
+              </div>
+              <p>{product.featureDesc}</p>
+            </div>
+            <Link to={`/products/${product.id}`} className="gallery-cta">
+              Explore the equipment <ArrowUpRight size={20} strokeWidth={1.6} />
+            </Link>
+            <Link to={`/request-a-quote?product=${product.id}`} className="gallery-enquire">
+              Talk about your pond <ArrowRight size={16} strokeWidth={1.6} />
+            </Link>
+          </div>
+        </div>
+
+        <div className="gallery-center">
+          <div className="gallery-image-stage" aria-live="polite">
+            <div className="gallery-image-halo" aria-hidden="true" />
+            <img
+              key={product.image}
+              src={product.image}
+              alt={product.alt}
+              className={`gallery-product-image gallery-product-${active}`}
+              width="1024"
+              height="768"
+              decoding="async"
+            />
+            <span className="gallery-contact-shadow" aria-hidden="true" />
+          </div>
+
+          <div className="gallery-switcher">
+            <div className="gallery-switcher-top">
+              <span>Find your flow</span>
+              <div>
+                <button
+                  type="button"
+                  aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
+                  aria-pressed={paused}
+                  onClick={() => setPaused((p) => !p)}
+                  title={paused ? 'Resume slideshow' : 'Pause slideshow'}
+                >
+                  {paused ? <Play size={14} strokeWidth={1.7} /> : <Pause size={14} strokeWidth={1.7} />}
+                </button>
+                <button type="button" aria-label="Previous product" onClick={() => change(active - 1)}>
+                  <ArrowLeft size={18} strokeWidth={1.5} />
+                </button>
+                <span className="gallery-counter">
+                  0{active + 1} <i>/ 0{count}</i>
+                </span>
+                <button type="button" aria-label="Next product" onClick={() => change(active + 1)}>
+                  <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={tabs}
+              className="gallery-product-tabs"
+              role="tablist"
+              aria-label="Choose equipment"
+              onKeyDown={(e) => {
+                let next = active;
+                if (e.key === 'ArrowRight') next = (active + 1) % count;
+                else if (e.key === 'ArrowLeft') next = (active - 1 + count) % count;
+                else if (e.key === 'Home') next = 0;
+                else if (e.key === 'End') next = count - 1;
+                else return;
+                e.preventDefault();
+                change(next);
+                tabs.current?.querySelectorAll<HTMLButtonElement>('[role=tab]')[next]?.focus();
+              }}
+            >
+              {showcaseProducts.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  id={`equipment-tab-${index}`}
+                  aria-selected={active === index}
+                  aria-controls="equipment-info"
+                  tabIndex={active === index ? 0 : -1}
+                  className={active === index ? 'selected' : ''}
+                  onClick={() => change(index)}
+                >
+                  <img src={item.image} alt="" width="88" height="70" loading="lazy" />
+                  <span>{units[index]}</span>
+                  <span className="gallery-selection-dot" aria-hidden="true" />
+                  {active === index && isPlaying && (
+                    <span className="gallery-slide-progress" key={`prog-${active}`} aria-hidden="true" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="gallery-right" id="equipment-info" role="tabpanel" aria-labelledby={`equipment-tab-${active}`}>
+          <div className="gallery-glass gallery-title-card" key={`title-${active}`}>
+            <span className="gallery-eyebrow">{product.specs.type}</span>
+            <h3>{product.name}</h3>
+            <p>{product.tagline}</p>
+            <svg className="gallery-wave" viewBox="0 0 350 90" aria-hidden="true">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <path
+                  key={i}
+                  d={`M0 ${45 + i * 2} C55 ${5 + i * 6},75 ${85 - i * 4},130 45 S205 ${5 + i * 7},260 45 S315 ${85 - i * 6},350 45`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={i === 2 ? 1.4 : 0.65}
+                  opacity={1 - i * 0.12}
+                />
+              ))}
+            </svg>
+            <span className="gallery-title-caption">Quality comes first. In every detail.</span>
+          </div>
+
+          <div className="gallery-glass gallery-main-info" key={`info-${active}`}>
+            <h4>The details</h4>
+            <div className="gallery-info-grid">
+              {info.map(({ Icon, label, value }) => (
+                <div key={label}>
+                  <Icon size={26} strokeWidth={1.35} aria-hidden="true" />
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="gallery-stat">
+              <span>{product.bigStat.value}</span>
+              <p>{product.bigStat.label}</p>
+              <small>{product.bigStat.standard}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
+
 export default ProductShowcase;

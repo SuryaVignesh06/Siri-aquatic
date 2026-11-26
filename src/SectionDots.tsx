@@ -7,11 +7,9 @@ interface Dot {
 
 const dots: Dot[] = [
   { id: 'hero', label: 'Overview' },
-  { id: 'trust-strip', label: 'Trust & Stats' },
   { id: 'range', label: 'Equipment Range' },
-  { id: 'showcase', label: 'Flagship Aerators' },
-  { id: 'why-siri', label: 'The Siri Approach' },
-  { id: 'selector-tool', label: 'Sizing Tool' }
+  { id: 'showcase', label: 'In Our Element' },
+  { id: 'trust-strip', label: 'Trust & Stats' }
 ];
 
 export function SectionDots() {

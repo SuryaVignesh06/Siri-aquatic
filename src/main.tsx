@@ -4,13 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowUpRight,
-  ArrowRight,
-  ArrowDown,
   Search,
   Menu,
   X,
   Waves,
-  Wind,
   Settings2,
   Droplets,
   Plus,
@@ -18,7 +15,6 @@ import {
   Check,
   Download,
   MoveUpRight,
-  Sparkles,
   Play,
   Pause
 } from 'lucide-react';
@@ -34,10 +30,10 @@ import { ScrollToTop } from './ScrollToTop';
 import { ProductShowcase } from './ProductShowcase';
 import { TrustStrip } from './TrustStrip';
 import { HeroWordmark } from './HeroWordmark';
-import { AeratorSelectorTeaser } from './AeratorSelectorTeaser';
 import { FloatingWhatsApp } from './FloatingWhatsApp';
 import { SectionDivider } from './SectionDivider';
-
+import { aeratorProducts, probioticProducts, spareEquipmentProducts } from './catalogData';
+import { ProbioticsPage } from './ProbioticsPage';
 
 function Link(props: React.ComponentProps<typeof RouterLink>) {
   return <RouterLink {...props} viewTransition />;
@@ -52,45 +48,98 @@ function Button({ to, children, light = false }: { to: string; children: React.R
   );
 }
 
-const photos = [
-  { src: assetUrl('/hero.webp'), alt: 'Concept scene of a paddle wheel aerator operating in a pond', credit: 'Concept visual' },
-  { src: assetUrl('/images/pump.webp'), alt: 'Reference photograph of an electric water pump', credit: 'Reference photograph' },
-  { src: assetUrl('/images/ponds.webp'), alt: 'Aerial reference photograph of aquaculture ponds', credit: 'Reference photograph' },
-  { src: assetUrl('/images/aerator-pro4-cutout.png'), alt: 'Illustrative paddle wheel aerator', credit: 'Concept product render' },
-  { src: assetUrl('/images/aerator-turbo2-cutout.png'), alt: 'Illustrative compact paddle wheel aerator', credit: 'Concept product render' },
-  { src: assetUrl('/images/aerator-spiral-cutout.png'), alt: 'Illustrative spiral impeller', credit: 'Concept product render' }
-];
-
-function Photo({ type = 0, className = '' }: { type?: number; className?: string }) {
-  const p = photos[type];
-  return (
-    <img
-      className={`card-photo photo-${type} ${type >= 3 ? 'product-cutout-photo' : ''} ${className}`}
-      src={p.src}
-      alt={p.alt}
-      loading="lazy"
-      decoding="async"
-      width={1000}
-      height={750}
-      onLoad={(e) => e.currentTarget.classList.add('loaded')}
-      onError={(e) => {
-        e.currentTarget.onerror = null;
-        e.currentTarget.src = assetUrl('/hero.webp');
-        e.currentTarget.alt = 'Illustrative aquaculture pond';
-        e.currentTarget.classList.add('loaded');
-      }}
-    />
-  );
+interface CardDisplayItem {
+  id: string;
+  series: string;
+  name: string;
+  desc: string;
+  image: string;
+  alt: string;
+  chips: [string, string, string];
+  to: string;
+  isProbiotic?: boolean;
 }
 
-const categories = ['All solutions', 'Aeration systems', 'Equipment & spares', 'Pond care'];
-const products = [
-  { id: 'paddle-wheel', name: 'Paddle wheel aerators', category: 'Aeration systems', desc: 'Explore surface aeration equipment for your pond.', type: 3 },
-  { id: 'compact-aerator', name: 'Compact paddle aerators', category: 'Aeration systems', desc: 'Explore compact aeration for smaller ponds and flexible layouts.', type: 4 },
-  { id: 'spiral-impeller', name: 'Spiral impellers', category: 'Aeration systems', desc: 'Discuss circulation below the surface and your pond configuration.', type: 5 },
-  { id: 'water-pumps', name: 'Water pumps', category: 'Equipment & spares', desc: 'Find a starting point for water transfer, circulation and pumping requirements.', type: 1 },
-  { id: 'pond-equipment', name: 'Pond equipment & spares', category: 'Equipment & spares', desc: 'Discuss pumps, motors, gearboxes and replacement parts.', type: 1 },
-  { id: 'pond-care', name: 'Pond-care solutions', category: 'Pond care', desc: 'Discuss water, soil and nutrition requirements with the team.', type: 2 }
+const aeratorCardItems: CardDisplayItem[] = aeratorProducts.map((a) => ({
+  id: a.id,
+  series: a.series,
+  name: a.name,
+  desc: a.desc,
+  image: a.image,
+  alt: a.alt,
+  chips: a.chips,
+  to: `/products/${a.id}`,
+  isProbiotic: false
+}));
+
+const probioticCardItems: CardDisplayItem[] = probioticProducts.map((p) => ({
+  id: p.id,
+  series: `${p.code} · ${p.series}`,
+  name: p.name,
+  desc: p.subtitle,
+  image: p.image,
+  alt: `${p.name} — ${p.subtitle}`,
+  chips: p.chips,
+  to: `/probiotics#${p.id}`,
+  isProbiotic: true
+}));
+
+const allCatalogEntries = [
+  ...aeratorProducts.map((a) => ({
+    id: a.id,
+    category: 'Aeration systems',
+    name: a.name,
+    desc: a.desc,
+    image: a.image,
+    alt: a.alt,
+    credit: 'Product photograph',
+    isCutout: true,
+    specRows: [
+      ['Power rating', a.specs.power],
+      ['Configuration', a.specs.configuration],
+      ['Floats / structure', a.specs.floats],
+      ['Power supply', a.specs.supply],
+      ['Pond coverage', a.specs.coverage],
+      ['Oxygen transfer', a.specs.otr],
+      ['Build & frame', a.specs.frame],
+      ['Warranty', a.specs.warranty]
+    ]
+  })),
+  ...probioticProducts.map((p) => ({
+    id: p.id,
+    category: 'Pond care & probiotics',
+    name: p.name,
+    desc: p.description,
+    image: p.image,
+    alt: `${p.name} — ${p.subtitle}`,
+    credit: 'Product photograph',
+    isCutout: false,
+    specRows: [
+      ['Product code', p.code],
+      ['Category', p.series],
+      ['Dosage & usage', p.dosage],
+      ['Ingredients', p.ingredients],
+      ['Package sizes', p.packageSize]
+    ]
+  })),
+  ...spareEquipmentProducts.map((s) => ({
+    id: s.id,
+    category: 'Equipment & spares',
+    name: s.name,
+    desc: s.desc,
+    image: s.image,
+    alt: s.alt,
+    credit: 'Product photograph',
+    isCutout: true,
+    specRows: [
+      ['Category', s.specs.category],
+      ['Capacity / rating', s.specs.capacity],
+      ['Construction', s.specs.build],
+      ['Compatibility', s.specs.compatibility],
+      ['Power / drive', s.specs.power],
+      ['Warranty', s.specs.warranty]
+    ]
+  }))
 ];
 
 function Mark({ large = false }: { large?: boolean }) {
@@ -121,6 +170,8 @@ interface HeaderProps {
 }
 
 function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps) {
+  const isProbioticDetail = probioticProducts.some((p) => path === `/products/${p.id}`);
+  const isAeratorDetail = aeratorProducts.some((a) => path === `/products/${a.id}`);
   return (
     <header className={isHero ? 'calm-header calm-header-home' : 'calm-header calm-header-inner'}>
       <Link to="/" className="brand" aria-label="Siri Aquatic Solutions">
@@ -129,15 +180,23 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
       <nav aria-label="Main navigation" id="primary-navigation" className={menu ? 'open' : ''}>
         {[
           ['/', 'Home'],
-          ['/products', 'Products'],
-          ['/solutions', 'Solutions'],
-          ['/about', 'Our story'],
-          ['/knowledge', 'Knowledge']
-        ].map(([url, name]) => (
-          <Link className={(url === "/" ? path === "/" : path === url || path.startsWith(url + "/")) ? "active" : ""} aria-current={(url === "/" ? path === "/" : path === url || path.startsWith(url + "/")) ? "page" : undefined} key={url} to={url}>
-            {name}
-          </Link>
-        ))}
+          ['/aerators', 'Aerators'],
+          ['/probiotics', 'Probiotics'],
+          ['/about', 'Our story']
+        ].map(([url, name]) => {
+          const isActive =
+            url === '/'
+              ? path === '/'
+              : path === url ||
+                path.startsWith(url + '/') ||
+                (url === '/probiotics' && isProbioticDetail) ||
+                (url === '/aerators' && isAeratorDetail);
+          return (
+            <Link className={isActive ? 'active' : ''} aria-current={isActive ? 'page' : undefined} key={url} to={url}>
+              {name}
+            </Link>
+          );
+        })}
       </nav>
       <div className="header-actions">
         <button
@@ -149,7 +208,7 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
           <Search size={19} />
         </button>
         <Link to="/request-a-quote" className="header-quote">
-          Let’s talk <ArrowUpRight size={17} />
+          Quote <ArrowUpRight size={17} />
         </Link>
         <button
           className="icon-button menu-toggle"
@@ -166,87 +225,309 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
   );
 }
 
-function HeroAtmosphere({reduced}:{reduced:boolean}){
- const ref=useRef<HTMLVideoElement>(null);const [paused,setPaused]=useState(false);
- useEffect(()=>{const v=ref.current;if(!v)return;const observer=new IntersectionObserver(([e])=>{if(e.isIntersecting&&!reduced&&!paused)v.play().catch(()=>{});else v.pause()},{threshold:.1});observer.observe(v);if(reduced||paused)v.pause();return()=>{observer.disconnect();v.pause()}},[reduced,paused]);
- return <><div className="hero-atmosphere" aria-hidden="true"><video ref={ref} src={assetUrl('/water-reel.mp4#t=5')} muted loop playsInline preload="metadata"/></div><button type="button" className="atmosphere-control" onClick={()=>setPaused(!paused)} aria-pressed={paused} aria-label={paused?'Play background video':'Pause background video'}>{paused?<Play size={14}/>:<Pause size={14}/>}</button></>
-}
-function LogoDarkFilter(){return <svg width="0" height="0" className="logo-filter-defs" aria-hidden="true"><defs><filter id="siri-logo-dark" colorInterpolationFilters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  2 2 2 0 -0.45" result="colors"/><feComposite in="colors" in2="SourceAlpha" operator="in" result="colorPixels"/><feFlood floodColor="#ffffff" result="white"/><feComposite in="white" in2="SourceAlpha" operator="in" result="whiteLogo"/><feMerge><feMergeNode in="whiteLogo"/><feMergeNode in="colorPixels"/></feMerge></filter></defs></svg>}
+const HERO_VIDEO_SPEED = 0.58;
 
-function HeroSection({reduced}:{reduced:boolean;menu:boolean;setMenu:React.Dispatch<React.SetStateAction<boolean>>;setSearch:React.Dispatch<React.SetStateAction<boolean>>;path:string}) {
-  const [paused,setPaused]=useState(false);
-  const [visible,setVisible]=useState(true);
-  const [activeEquipment,setActiveEquipment]=useState(0);
-  const [interacting,setInteracting]=useState(false);
-  useEffect(()=>{if(paused||reduced||!visible||interacting)return;const interval=window.setInterval(()=>setActiveEquipment(index=>(index+1)%3),4200);return()=>window.clearInterval(interval)},[paused,reduced,visible,interacting]);
-  const rail=useRef<HTMLDivElement>(null);
-  useEffect(()=>{const node=rail.current;if(!node)return;const io=new IntersectionObserver(([e])=>setVisible(e.isIntersecting),{threshold:.05});io.observe(node);return()=>io.disconnect()},[]);
-  const equipment=[{src:assetUrl('/images/aerator-pro4-cutout.png'),name:'Paddle wheel aerator'},{src:assetUrl('/images/aerator-turbo2-cutout.png'),name:'Compact aerator'},{src:assetUrl('/images/aerator-spiral-cutout.png'),name:'Spiral impeller'}];
-  return <section className="calm-hero machine-hero poster-hero" id="hero" aria-label="Siri Aquatic introduction">
-    <HeroAtmosphere reduced={reduced}/>
-    <div className="poster-hero-content">
-      <div className="poster-heading"><span className="poster-eyebrow">QUALITY COMES FIRST</span><h1 className="hero-brand-heading" aria-label="Siri Aquatic Solutions Pvt. Ltd."><HeroWordmark/></h1></div>
-      <div ref={rail} className="hero-focus-carousel" aria-label="Aeration equipment carousel" aria-roledescription="carousel" onMouseEnter={()=>setInteracting(true)} onMouseLeave={()=>setInteracting(false)} onFocusCapture={()=>setInteracting(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setInteracting(false)}}>
-        {equipment.map((item,index)=>{const position=(index-activeEquipment+3)%3;const side=position===0?'center':position===1?'right':'left';return <Link key={item.name} to="/products/paddle-wheel" className={`hero-focus-item is-${side}`} aria-current={position===0?'true':undefined} aria-label={position===0?`Explore ${item.name}`:`Show ${item.name}`} onClick={e=>{if(position!==0){e.preventDefault();setActiveEquipment(index)}}}><img src={item.src} alt={item.name} width="1254" height="1254" decoding="async" fetchPriority={index===0?'high':undefined}/><span>{item.name}</span></Link>})}
-        <div className="hero-focus-dots" role="group" aria-label="Choose featured aerator">{equipment.map((item,index)=><button key={item.name} type="button" aria-label={`Feature ${item.name}`} aria-pressed={activeEquipment===index} onClick={()=>setActiveEquipment(index)}><span/></button>)}</div>
+function HeroAtmosphere({ reduced }: { reduced: boolean }) {
+  const videoZero = useRef<HTMLVideoElement>(null);
+  const videoOne = useRef<HTMLVideoElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [activeVideo, setActiveVideo] = useState<0 | 1>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.1 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const videos = [videoZero.current, videoOne.current];
+    videos.forEach((v) => {
+      if (v) {
+        v.defaultPlaybackRate = HERO_VIDEO_SPEED;
+        v.playbackRate = HERO_VIDEO_SPEED;
+      }
+    });
+    const current = videos[activeVideo];
+    const other = videos[activeVideo === 0 ? 1 : 0];
+    if (other) other.pause();
+    if (!current) return;
+    if (visible && !reduced && !paused) {
+      current.playbackRate = HERO_VIDEO_SPEED;
+      current.play().catch(() => {});
+    } else {
+      current.pause();
+    }
+  }, [activeVideo, visible, reduced, paused]);
+
+  const applySlowRate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    e.currentTarget.defaultPlaybackRate = HERO_VIDEO_SPEED;
+    e.currentTarget.playbackRate = HERO_VIDEO_SPEED;
+  };
+
+  const switchTo = (next: 0 | 1) => {
+    const nextVideo = next === 0 ? videoZero.current : videoOne.current;
+    if (nextVideo) {
+      nextVideo.currentTime = 0;
+      nextVideo.defaultPlaybackRate = HERO_VIDEO_SPEED;
+      nextVideo.playbackRate = HERO_VIDEO_SPEED;
+      if (visible && !reduced && !paused) {
+        nextVideo.play().catch(() => {});
+      }
+    }
+    setActiveVideo(next);
+  };
+
+  return (
+    <>
+      <div ref={containerRef} className="hero-atmosphere" aria-hidden="true">
+        <video
+          ref={videoZero}
+          className={`hero-video-layer${activeVideo === 0 ? ' is-active' : ''}`}
+          src={assetUrl('/intro-one.mp4')}
+          muted
+          playsInline
+          preload="auto"
+          onLoadedMetadata={applySlowRate}
+          onPlay={applySlowRate}
+          onEnded={() => switchTo(1)}
+        />
+        <video
+          ref={videoOne}
+          className={`hero-video-layer${activeVideo === 1 ? ' is-active' : ''}`}
+          src={assetUrl('/intro-two.mp4')}
+          muted
+          playsInline
+          preload="auto"
+          onLoadedMetadata={applySlowRate}
+          onPlay={applySlowRate}
+          onEnded={() => switchTo(0)}
+        />
       </div>
-      <div className="poster-hero-bottom"><p>Aquaculture equipment. <span>Thoughtful pond solutions.</span></p><button type="button" className="hero-rail-control" aria-label={paused?'Resume product carousel':'Pause product carousel'} aria-pressed={paused} onClick={()=>setPaused(!paused)}>{paused?<Play size={15}/>:<Pause size={15}/>}<span>{paused?'Play':'Pause'} products</span></button></div>
-    </div>
-  </section>;
+      <button
+        type="button"
+        className="atmosphere-control"
+        onClick={() => setPaused(!paused)}
+        aria-pressed={paused}
+        aria-label={paused ? 'Play background video' : 'Pause background video'}
+      >
+        {paused ? <Play size={14} /> : <Pause size={14} />}
+      </button>
+    </>
+  );
+}
+
+function LogoDarkFilter() {
+  return (
+    <svg width="0" height="0" className="logo-filter-defs" aria-hidden="true">
+      <defs>
+        <filter id="siri-logo-dark" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            in="SourceGraphic"
+            type="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  2 2 2 0 -0.45"
+            result="colors"
+          />
+          <feComposite in="colors" in2="SourceAlpha" operator="in" result="colorPixels" />
+          <feFlood floodColor="#ffffff" result="white" />
+          <feComposite in="white" in2="SourceAlpha" operator="in" result="whiteLogo" />
+          <feMerge>
+            <feMergeNode in="whiteLogo" />
+            <feMergeNode in="colorPixels" />
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+  );
+}
+
+function HeroSection({
+  reduced
+}: {
+  reduced: boolean;
+  menu: boolean;
+  setMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  path: string;
+}) {
+  const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [activeEquipment, setActiveEquipment] = useState(0);
+  const [interacting, setInteracting] = useState(false);
+
+  useEffect(() => {
+    if (paused || reduced || !visible || interacting) return;
+    const interval = window.setInterval(() => setActiveEquipment((index) => (index + 1) % 3), 4200);
+    return () => window.clearInterval(interval);
+  }, [paused, reduced, visible, interacting]);
+
+  const rail = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = rail.current;
+    if (!node) return;
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.05 });
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
+  const equipment = [
+    { src: assetUrl('/images/aerator-4paddle-real.png'), name: 'Pro-4 Paddle Wheel Aerator', to: '/products/paddle-wheel' },
+    { src: assetUrl('/images/aerator-2paddle-real.png'), name: 'Turbo-2 Compact Aerator', to: '/products/compact-aerator' },
+    { src: assetUrl('/images/aerator-impeller-real.png'), name: 'Surge Floating Impeller', to: '/products/spiral-impeller' }
+  ];
+
+  return (
+    <section className="calm-hero machine-hero poster-hero" id="hero" aria-label="Siri Aquatic introduction">
+      <HeroAtmosphere reduced={reduced} />
+      <div className="poster-hero-content">
+        <div className="poster-heading">
+          <span className="poster-eyebrow">QUALITY COMES FIRST</span>
+          <h1 className="hero-brand-heading" aria-label="Siri Aquatic Solutions Pvt. Ltd.">
+            <HeroWordmark />
+          </h1>
+        </div>
+        <div
+          ref={rail}
+          className="hero-focus-carousel"
+          aria-label="Aeration equipment carousel"
+          aria-roledescription="carousel"
+          onMouseEnter={() => setInteracting(true)}
+          onMouseLeave={() => setInteracting(false)}
+          onFocusCapture={() => setInteracting(true)}
+          onBlurCapture={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) setInteracting(false);
+          }}
+        >
+          {equipment.map((item, index) => {
+            const position = (index - activeEquipment + 3) % 3;
+            const side = position === 0 ? 'center' : position === 1 ? 'right' : 'left';
+            return (
+              <Link
+                key={item.name}
+                to={item.to}
+                className={`hero-focus-item is-${side}`}
+                aria-current={position === 0 ? 'true' : undefined}
+                aria-label={position === 0 ? `Explore ${item.name}` : `Show ${item.name}`}
+                onClick={(e) => {
+                  if (position !== 0) {
+                    e.preventDefault();
+                    setActiveEquipment(index);
+                  }
+                }}
+              >
+                <img
+                  src={item.src}
+                  alt={item.name}
+                  width="1254"
+                  height="1254"
+                  decoding="async"
+                  fetchPriority={index === 0 ? 'high' : undefined}
+                />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
+          <div className="hero-focus-dots" role="group" aria-label="Choose featured aerator">
+            {equipment.map((item, index) => (
+              <button
+                key={item.name}
+                type="button"
+                aria-label={`Feature ${item.name}`}
+                aria-pressed={activeEquipment === index}
+                onClick={() => setActiveEquipment(index)}
+              >
+                <span />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="poster-hero-bottom">
+          <p>
+            Aquaculture equipment. <span>Thoughtful pond solutions.</span>
+          </p>
+          <button
+            type="button"
+            className="hero-rail-control"
+            aria-label={paused ? 'Resume product carousel' : 'Pause product carousel'}
+            aria-pressed={paused}
+            onClick={() => setPaused(!paused)}
+          >
+            {paused ? <Play size={15} /> : <Pause size={15} />}
+            <span>{paused ? 'Play' : 'Pause'} products</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('All solutions');
+  const [homeFilter, setHomeFilter] = useState<'All' | 'Aerators' | 'Probiotics'>('All');
   const [manualReduced, setReduced] = useState(() => localStorage.getItem('siri-motion') === 'reduced');
-  const [systemReduced,setSystemReduced]=useState(()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const reduced=manualReduced||systemReduced;
-  useEffect(()=>{const mq=window.matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setSystemReduced(mq.matches);mq.addEventListener('change',update);return()=>mq.removeEventListener('change',update)},[]);
+  const [systemReduced, setSystemReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const reduced = manualReduced || systemReduced;
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setSystemReduced(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
   const [saved, setSaved] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
 
   const path = location.pathname.replace(/\/+$/, '') || '/';
-  const activeProduct = products.find((p) => path === `/products/${p.id}`);
+  const activeProduct = allCatalogEntries.find((p) => path === `/products/${p.id}`);
 
-  // Scroll to top on route change
+  // Scroll to top on route change (unless hash anchor)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (!location.hash) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
     setMenu(false);
     setSaved(false);
-  }, [path]);
+  }, [path, location.hash]);
 
   // One navigation bar smoothly gains a rounded surface when the page scrolls.
-  useEffect(()=>{
-    const header=document.querySelector('header');
-    const update=()=>{
-      if(!header)return;
-      header.classList.toggle('is-scrolled',window.scrollY>32);
-      // Sample the surface behind the bar, rather than the next section below it.
-      const bounds=header.getBoundingClientRect();
-      const sampleY=bounds.top+bounds.height*.5;
-      const dark=Array.from(document.querySelectorAll('.machine-hero,.equipment-gallery,footer')).some(section=>{
-        const rect=section.getBoundingClientRect();
-        return rect.top<=sampleY && rect.bottom>=sampleY;
+  useEffect(() => {
+    const header = document.querySelector('header');
+    const update = () => {
+      if (!header) return;
+      header.classList.toggle('is-scrolled', window.scrollY > 32);
+      const bounds = header.getBoundingClientRect();
+      const sampleY = bounds.top + bounds.height * 0.5;
+      const dark = Array.from(document.querySelectorAll('.machine-hero,.equipment-gallery,footer')).some((section) => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= sampleY && rect.bottom >= sampleY;
       });
-      header.setAttribute('data-surface',dark?'dark':'light');
+      header.setAttribute('data-surface', dark ? 'dark' : 'light');
     };
-    update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);
-    const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape')setMenu(false)};
-    window.addEventListener('keydown',onKey);
-    return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);window.removeEventListener('keydown',onKey)}
-  },[path]);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenu(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [path]);
 
   // Enhanced On-Scroll Reveal Observer
   useEffect(() => {
     document.title = `${path === '/' ? 'Quality Comes First' : activeProduct?.name || path.slice(1).replaceAll('-', ' ')} - Siri Aquatic`;
 
-    // Attribute scroll reveal types to standard sections and components
     document.querySelectorAll('.section-heading, .inner h1, .inner .lead, .spec-section h2, .quote-grid h1, .articles details').forEach((el, i) => {
       if (!el.hasAttribute('data-scroll')) {
         el.setAttribute('data-scroll', 'fade-up');
@@ -254,7 +535,7 @@ function App() {
       }
     });
 
-    document.querySelectorAll('.detail-grid > div, .spec-row, .quote-grid > div, .editorial > div, .approach-list > div, .footer-links > div, .principles > span').forEach((el, i) => {
+    document.querySelectorAll('.detail-grid > div, .spec-row, .quote-grid > div, .editorial > div, .footer-links > div, .principles > span').forEach((el, i) => {
       if (!el.hasAttribute('data-scroll')) {
         el.setAttribute('data-scroll', i % 2 === 0 ? 'fade-up' : 'fade-left');
         (el as HTMLElement).style.setProperty('--scroll-delay', `${(i % 4) * 80}ms`);
@@ -275,39 +556,18 @@ function App() {
 
     document.querySelectorAll('[data-scroll], [data-reveal]').forEach((el) => observer.observe(el));
 
-    const visibility = new IntersectionObserver((entries) =>
-      entries.forEach((e) => e.target.classList.toggle('in-view', e.isIntersecting))
-    );
-    document.querySelectorAll('.water-story, .hero, .brand-panel, .section').forEach((el) => visibility.observe(el));
-
     return () => {
       observer.disconnect();
-      visibility.disconnect();
     };
-  }, [path, filter, activeProduct, query]);
+  }, [path, homeFilter, activeProduct, query]);
 
-  // Scroll reading progress & story rotation parallax
+  // Scroll reading progress
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0;
     const update = () => {
       frame = 0;
       const total = document.documentElement.scrollHeight - innerHeight;
       document.documentElement.style.setProperty('--reading', `${total > 0 ? scrollY / total : 0}`);
-
-      const hero = document.querySelector('.hero') as HTMLElement | null;
-      if (hero && !reduced && !media.matches && innerWidth > 760) {
-        const r = hero.getBoundingClientRect();
-        if (r.bottom > 0) hero.style.setProperty('--hero-drift', `${Math.min(24, Math.max(0, -r.top * 0.08))}px`);
-      }
-
-      const story = document.querySelector('.water-story') as HTMLElement | null;
-      if (story && !reduced && !media.matches) {
-        const r = story.getBoundingClientRect();
-        const progress = Math.max(0, Math.min(1, (innerHeight - r.top) / (innerHeight + r.height)));
-        story.style.setProperty('--scroll-turn', `${progress * 100 - 50}deg`);
-        story.style.setProperty('--story-progress', String(progress));
-      }
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -320,12 +580,12 @@ function App() {
       window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(frame);
     };
-  }, [path, reduced]);
+  }, [path]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('reduce-motion', reduced);
     localStorage.setItem('siri-motion', manualReduced ? 'reduced' : 'full');
-    if(reduced)document.querySelectorAll('video').forEach(v=>v.pause());
+    if (reduced) document.querySelectorAll('video').forEach((v) => v.pause());
   }, [reduced, manualReduced]);
 
   useEffect(() => {
@@ -347,36 +607,61 @@ function App() {
     return () => window.removeEventListener('keydown', key);
   }, []);
 
-  const cards = (items = products) => (
+  const cards = (items: CardDisplayItem[]) => (
     <div className="product-grid stagger-container">
-      {items.map((p, i) => (
+      {items.map((item, i) => (
         <Link
           data-scroll="fade-up"
           data-reveal
           className="product-card"
-          to={`/products/${p.id}`}
-          key={p.id}
-          style={{ '--scroll-delay': `${i * 120}ms` } as React.CSSProperties}
+          to={item.to}
+          key={item.id}
+          style={{ '--scroll-delay': `${(i % 6) * 90}ms` } as React.CSSProperties}
         >
-          <div className={`product-art tone-${i}`}>
-            <span className="tiny-label">{p.category}</span>
-            <Photo type={p.type} />
+          <div className={`product-art tone-${i % 3}`}>
+            <img
+              className={`card-photo ${item.isProbiotic ? 'probiotic-card-photo' : 'product-cutout-photo'} loaded`}
+              src={item.image}
+              alt={item.alt}
+              loading="lazy"
+              decoding="async"
+              width={1000}
+              height={750}
+            />
             <span className="round-arrow">
               <ArrowUpRight size={21} />
             </span>
-            <small>{photos[p.type].credit}</small>
           </div>
           <div className="product-caption">
             <div>
-              <h3>{p.name}</h3>
-              <p>{p.desc}</p>
+              <span className="product-card-series">{item.series}</span>
+              <h3>{item.name}</h3>
+              <p>{item.desc}</p>
             </div>
-            <span>0{i + 1}</span>
+            <div className="product-spec-chips">
+              {item.chips.map((chip) => (
+                <span key={chip}>{chip}</span>
+              ))}
+            </div>
           </div>
         </Link>
       ))}
     </div>
   );
+
+  const homepageItems: CardDisplayItem[] =
+    homeFilter === 'Aerators'
+      ? aeratorCardItems
+      : homeFilter === 'Probiotics'
+      ? probioticCardItems
+      : [
+          aeratorCardItems[0],
+          aeratorCardItems[1],
+          aeratorCardItems[2],
+          probioticCardItems[0],
+          probioticCardItems[4],
+          probioticCardItems[6]
+        ];
 
   const cta = (
     <section className="cta" data-scroll="zoom-in" data-reveal>
@@ -394,7 +679,7 @@ function App() {
 
   return (
     <>
-      <LogoDarkFilter/>
+      <LogoDarkFilter />
       <AmbientBubbles />
       <ScrollToTop />
       <FloatingWhatsApp />
@@ -404,16 +689,13 @@ function App() {
       </a>
       <div className="reading-progress" aria-hidden="true" />
 
-      {/* Standard top header on subpages */}
-      {(
-        <Header
-          isHero={path === '/'}
-          menu={menu}
-          setMenu={setMenu}
-          setSearch={setSearch}
-          path={path}
-        />
-      )}
+      <Header
+        isHero={path === '/'}
+        menu={menu}
+        setMenu={setMenu}
+        setSearch={setSearch}
+        path={path}
+      />
 
       <div className="site-shell">
         <main id="main" key={path}>
@@ -426,9 +708,6 @@ function App() {
                 setSearch={setSearch}
                 path={path}
               />
-
-              {/* H2: Trust strip (Count-up stats + certifications sheet slide-over) */}
-
 
               <div className="principles stagger-container" data-scroll="fade-up">
                 <span>
@@ -449,7 +728,7 @@ function App() {
                 </span>
               </div>
 
-              {/* H3: Shop by category */}
+              {/* Shop by category with Aerators / Probiotics filter */}
               <section id="range" className="section range">
                 <div className="section-heading" data-scroll="fade-up" data-reveal>
                   <div>
@@ -461,214 +740,194 @@ function App() {
                     </h2>
                   </div>
                   <div className="section-intro">
-                    <p>Different ponds. Different needs. Explore the essentials that bring your aquaculture plans to life.</p>
-                    <Link className="text-link dark" to="/products">
-                      Explore all solutions <ArrowUpRight size={18} />
+                    <p>Different ponds. Different needs. Filter by aerators or probiotics to explore our range.</p>
+                    <Link className="text-link dark" to={homeFilter === 'Probiotics' ? '/probiotics' : '/aerators'}>
+                      Explore {homeFilter === 'Probiotics' ? 'all probiotics' : 'all aerators'} <ArrowUpRight size={18} />
                     </Link>
                   </div>
                 </div>
-                {cards()}
-              </section>
 
-              {/* Section-break mini-mark (Plan 10.3 B) */}
-              <SectionDivider />
-
-              {/* H4: Product Showcase (Section 8 dark glass stage reference) */}
-              <ProductShowcase />
-
-              {/* H5: Water story (Wheel turns, water wakes) */}
-              <section className="water-story water-story-refined" data-scroll="fade-up" data-reveal>
-                <div className="water-story-copy">
-                  <span className="eyebrow">A CONNECTED POND</span>
-                  <h2><span>When water moves,</span><span>life moves</span><span className="water-accent">with it.</span></h2>
-                  <p>Aeration is part of a bigger picture. Your water, your equipment and your everyday decisions all work together.</p>
-                  <Link to="/solutions" className="water-story-link">Explore the connection <ArrowUpRight size={20}/></Link>
-                </div>
-                <div className="water-visual" data-scroll="fade-left">
-                  <img src={assetUrl('/images/ponds.webp')} alt="Aerial reference photograph of connected aquaculture ponds" width="600" height="400" loading="lazy"/>
-                  <div className="water-photo-shade"/>
-                  <div className="water-visual-caption"><Waves size={28}/><span>Air. Water.<br/>Movement.</span></div>
-                  <span className="water-photo-credit">Reference photograph</span>
-                </div>
-              </section>
-
-              {/* H6: Why Siri Aquatic (4 pillars) */}
-              <section id="why-siri" className="section approach">
-                <div data-scroll="fade-right" data-reveal>
-                  <span className="eyebrow">03 / THE SIRI APPROACH</span>
-                  <h2>
-                    Quality isn't a feature.
-                    <br />
-                    It's the starting point.
-                  </h2>
-                  <p>
-                    Our name comes with a simple promise of intent:
-                    <br />
-                    Quality Comes First. It shapes the questions we ask
-                    <br />
-                    and the conversations we have.
-                  </p>
-                  <Link to="/about" className="text-link dark">
-                    Get to know Siri <ArrowUpRight size={18} />
-                  </Link>
-                </div>
-                <div className="approach-list stagger-container">
-                  {[
-                    ['01', 'Build quality & precision', 'Field-tested materials, stainless shafts, and virgin HDPE floats designed for harsh saltwater ponds.'],
-                    ['02', 'Technical guidance', 'Calculate required dissolved oxygen and motor sizing tailored to your stocking density and pond geometry.'],
-                    ['03', 'Spares availability', 'Factory-direct access to impellers, gearboxes, motors, tripods, and replacement assemblies without delay.'],
-                    ['04', 'After-sales support', 'Direct engineering support and technician consultation throughout your culture lifecycle.']
-                  ].map(([n, t, d], i) => (
-                    <div data-scroll="fade-left" data-reveal key={n} style={{ '--scroll-delay': `${i * 120}ms` } as React.CSSProperties}>
-                      <span>{n}</span>
-                      <div>
-                        <h3>{t}</h3>
-                        <p>{d}</p>
-                      </div>
-                      <ArrowUpRight size={20} />
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* H7: Aerator Selector Teaser with sizing mini-tool */}
-              <AeratorSelectorTeaser />
-
-              {/* Section-break mini-mark (Plan 10.3 B) */}
-              <SectionDivider />
-
-              <section className="knowledge-preview section">
-                <div className="section-heading" data-scroll="fade-up" data-reveal>
-                  <div>
-                    <span className="eyebrow">04 / A LITTLE KNOW-HOW</span>
-                    <h2>
-                      Better questions.
-                      <br />
-                      Informed decisions.
-                    </h2>
-                  </div>
-                  <Link to="/knowledge" className="text-link dark">
-                    Visit the knowledge centre <ArrowUpRight size={18} />
-                  </Link>
-                </div>
-                <div className="guide-grid stagger-container">
-                  {['Before choosing an aerator', 'Get your pond brief ready', 'A closer look at maintenance'].map((t, i) => (
-                    <Link
-                      to={`/knowledge?guide=${i}`}
-                      data-scroll="fade-up"
-                      data-reveal
-                      className="guide"
-                      key={t}
-                      style={{ '--scroll-delay': `${i * 140}ms` } as React.CSSProperties}
+                <div className="range-filter-bar" role="group" aria-label="Filter equipment and probiotics">
+                  {(['All', 'Aerators', 'Probiotics'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      className={`range-filter-pill ${homeFilter === tab ? 'is-active' : ''}`}
+                      aria-pressed={homeFilter === tab}
+                      onClick={() => setHomeFilter(tab)}
                     >
-                      <span>FIELD NOTES / 0{i + 1}</span>
-                      <div className="guide-image">
-                        <Photo type={i === 0 ? 0 : i === 1 ? 2 : 1} />
-                        <span className="guide-icon">
-                          {i === 0 ? <Wind /> : i === 1 ? <Waves /> : <Settings2 />}
-                        </span>
-                      </div>
-                      <h3>{t}</h3>
-                      <span className="text-link">
-                        Read the checklist <ArrowUpRight size={17} />
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-              {cta}
-            </>
-          ) : path === '/products' || ['/aerators', '/equipment', '/probiotics'].includes(path) ? (
-            <section className="section inner" data-scroll="fade-up">
-              <Breadcrumb name="Products" />
-              <span className="eyebrow">FIND YOUR FIT</span>
-              <h1>
-                Made for your
-                <br />
-                water world.
-              </h1>
-              <p className="lead">
-                Explore solution categories. Final models, specifications and availability are confirmed with the Siri team.
-              </p>
-              <div className="catalogue-controls" data-scroll="fade-up">
-                <div className="filters">
-                  {categories.map((c) => (
-                    <button key={c} onClick={() => setFilter(c)} className={filter === c ? 'selected' : ''}>
-                      {c}
+                      {tab}
                     </button>
                   ))}
                 </div>
-                <label className="search-field">
-                  <Search size={18} />
-                  <input
-                    aria-label="Search solutions"
-                    placeholder="Find a solution…"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </label>
-              </div>
-              {cards(
-                products.filter(
-                  (p) =>
-                    (filter === 'All solutions' || filter === p.category) &&
-                    `${p.name} ${p.desc}`.toLowerCase().includes(query.toLowerCase())
-                )
-              )}
-              {!products.some(
-                (p) =>
-                  (filter === 'All solutions' || filter === p.category) &&
-                  `${p.name} ${p.desc}`.toLowerCase().includes(query.toLowerCase())
-              ) && (
-                <div className="empty" data-scroll="fade-up">
-                  <Waves />
-                  <h3>No matching solutions</h3>
-                  <p>Try another search or reset the filters.</p>
-                  <button
-                    className="button"
-                    onClick={() => {
-                      setQuery('');
-                      setFilter('All solutions');
-                    }}
-                  >
-                    Reset filters
-                  </button>
+
+                {cards(homepageItems)}
+              </section>
+
+              <SectionDivider />
+
+              {/* Product Showcase: In Our Element */}
+              <ProductShowcase />
+
+              {/* Equipment & Spares section after In Our Element */}
+              <section id="spares" className="spares-section" aria-labelledby="spares-heading">
+                <div className="spares-shell">
+                  <div className="spares-header" data-scroll="fade-up" data-reveal>
+                    <div>
+                      <span className="eyebrow">EQUIPMENT &amp; SPARES</span>
+                      <h2 id="spares-heading">
+                        Feeders, pumps &amp; every spare part.
+                      </h2>
+                    </div>
+                    <p className="spares-lead">
+                      Beyond aeration, Siri Aquatic supplies the full pond ecosystem — automatic feeders, engines,
+                      pumps, gearboxes, control panels and genuine replacement parts.
+                    </p>
+                  </div>
+
+                  <div className="spares-grid stagger-container">
+                    {spareEquipmentProducts.map((item, idx) => (
+                      <Link
+                        key={item.id}
+                        to={`/products/${item.id}`}
+                        className="spares-card"
+                        data-scroll="fade-up"
+                        data-reveal
+                        style={{ '--scroll-delay': `${idx * 90}ms` } as React.CSSProperties}
+                      >
+                        <div className="spares-card-media">
+                          <img src={item.image} alt={item.alt} loading="lazy" decoding="async" />
+                          <span className="spares-card-arrow">
+                            <ArrowUpRight size={17} />
+                          </span>
+                        </div>
+                        <div className="spares-card-body">
+                          <div>
+                            <span className="spares-card-tag">{item.tag}</span>
+                            <h3>{item.name}</h3>
+                            <p>{item.desc}</p>
+                          </div>
+                          <div className="product-spec-chips">
+                            {item.chips.map((chip) => (
+                              <span key={chip}>{chip}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              )}
-              <p className="content-note">
-                Range preview · Images are illustrative or external references, not verified Siri products. Approved models and
-                datasheets will be added to the catalogue.
+              </section>
+
+              {cta}
+            </>
+          ) : path === '/aerators' || path === '/products' || path === '/equipment' ? (
+            <section className="section inner" data-scroll="fade-up">
+              <Breadcrumb name="Aerators" />
+              <span className="eyebrow">AERATION SYSTEMS</span>
+              <h1>
+                Aerators built for
+                <br />
+                every pond.
+              </h1>
+              <p className="lead">
+                Explore our complete range of paddle wheel, compact, impeller, and diffused aeration systems with key specifications below.
               </p>
+
+              {cards(aeratorCardItems)}
+
+              {/* Full Technical Specifications directly below the aerator cards */}
+              <div className="aerator-specs-matrix" id="specifications">
+                <div className="aerator-specs-matrix-head">
+                  <div>
+                    <span className="eyebrow">TECHNICAL SPECIFICATIONS</span>
+                    <h2>Specifications at a glance.</h2>
+                  </div>
+                  <p>Compare motor ratings, float configurations, power supply, and pond coverage across every aerator model.</p>
+                </div>
+
+                <div className="aerator-spec-cards-grid">
+                  {aeratorProducts.map((item) => (
+                    <article key={item.id} className="aerator-spec-detail-card">
+                      <div className="aerator-spec-detail-top">
+                        <div>
+                          <span>{item.series}</span>
+                          <h3>{item.name}</h3>
+                        </div>
+                        <Link to={`/request-a-quote?product=${item.id}`}>
+                          Quote <ArrowUpRight size={14} />
+                        </Link>
+                      </div>
+                      <dl className="aerator-spec-dl">
+                        <div>
+                          <dt>Motor / Power</dt>
+                          <dd>{item.specs.power}</dd>
+                        </div>
+                        <div>
+                          <dt>Configuration</dt>
+                          <dd>{item.specs.configuration}</dd>
+                        </div>
+                        <div>
+                          <dt>Floats / Assembly</dt>
+                          <dd>{item.specs.floats}</dd>
+                        </div>
+                        <div>
+                          <dt>Power Supply</dt>
+                          <dd>{item.specs.supply}</dd>
+                        </div>
+                        <div>
+                          <dt>Pond Coverage</dt>
+                          <dd>{item.specs.coverage}</dd>
+                        </div>
+                        <div>
+                          <dt>Oxygen Transfer</dt>
+                          <dd>{item.specs.otr}</dd>
+                        </div>
+                        <div>
+                          <dt>Frame &amp; Build</dt>
+                          <dd>{item.specs.frame}</dd>
+                        </div>
+                        <div>
+                          <dt>Warranty</dt>
+                          <dd>{item.specs.warranty}</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              {cta}
             </section>
+          ) : path === '/probiotics' ? (
+            <ProbioticsPage />
           ) : activeProduct ? (
             <section className="section inner" data-scroll="fade-up">
               <Breadcrumb name={activeProduct.name} />
               <div className="detail-grid">
                 <div className="detail-art" data-scroll="fade-right">
-                  <Photo type={activeProduct.type} />
-                  <small>{photos[activeProduct.type].credit} · not a verified Siri product</small>
+                  <img
+                    className={`card-photo ${activeProduct.isCutout ? 'product-cutout-photo' : ''} loaded`}
+                    src={activeProduct.image}
+                    alt={activeProduct.alt}
+                  />
+                  <small>{activeProduct.credit}</small>
                 </div>
                 <div data-scroll="fade-left">
                   <span className="eyebrow">{activeProduct.category}</span>
                   <h1>{activeProduct.name}</h1>
                   <p className="lead">{activeProduct.desc}</p>
-                  <p>Tell us about your requirements to discuss suitable options, current specifications and pricing.</p>
+                  <p>Tell us about your pond requirements to discuss configurations, dosing, and current pricing.</p>
                   <Button to={`/request-a-quote?product=${activeProduct.id}`}>Prepare an enquiry</Button>
                 </div>
               </div>
               <div className="spec-section" data-scroll="fade-up">
                 <h2>Details that matter.</h2>
-                <p>Confirm the current product documentation before making a purchase.</p>
-                {[
-                  'Model & configuration',
-                  'Power supply & rating',
-                  'Materials & dimensions',
-                  'Availability & warranty',
-                  'Datasheet & installation guide'
-                ].map((s, idx) => (
-                  <div className="spec-row" key={s} data-scroll="fade-up" style={{ '--scroll-delay': `${idx * 70}ms` } as React.CSSProperties}>
-                    <span>{s}</span>
-                    <span>To be confirmed with Siri</span>
+                <p>Technical specifications and application details.</p>
+                {activeProduct.specRows.map(([label, val], idx) => (
+                  <div className="spec-row" key={label} data-scroll="fade-up" style={{ '--scroll-delay': `${idx * 70}ms` } as React.CSSProperties}>
+                    <span>{label}</span>
+                    <span>{val}</span>
                   </div>
                 ))}
               </div>
@@ -676,7 +935,7 @@ function App() {
             </section>
           ) : path === '/request-a-quote' || path === '/contact' ? (
             <section className="section inner" data-scroll="fade-up">
-              <Breadcrumb name="Let's talk" />
+              <Breadcrumb name="Quote" />
               <div className="quote-grid">
                 <div data-scroll="fade-right">
                   <span className="eyebrow">EVERY POND HAS A STORY</span>
@@ -750,12 +1009,24 @@ function App() {
                     I'm interested in
                     <select
                       name="Interest"
-                      defaultValue={products.find((p) => p.id === new URLSearchParams(location.search).get('product'))?.name || ''}
+                      defaultValue={allCatalogEntries.find((p) => p.id === new URLSearchParams(location.search).get('product'))?.name || ''}
                     >
                       <option value="">Help me choose</option>
-                      {products.map((p) => (
-                        <option key={p.id}>{p.name}</option>
-                      ))}
+                      <optgroup label="Aerators">
+                        {aeratorProducts.map((p) => (
+                          <option key={p.id}>{p.name}</option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Equipment &amp; Spares">
+                        {spareEquipmentProducts.map((p) => (
+                          <option key={p.id}>{p.name}</option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Probiotics &amp; Pond Care">
+                        {probioticProducts.map((p) => (
+                          <option key={p.id}>{p.name}</option>
+                        ))}
+                      </optgroup>
                     </select>
                   </label>
                   <div className="form-row">
@@ -892,7 +1163,7 @@ function App() {
                   <span>QUALITY COMES FIRST</span>
                 </div>
               </div>
-              {cards()}
+              {cards(aeratorCardItems.slice(0, 3))}
               {cta}
             </section>
           ) : path === '/image-credits' ? (
@@ -900,30 +1171,15 @@ function App() {
               <Breadcrumb name="Image credits" />
               <h1>Behind the imagery.</h1>
               <p>
-                Photography gives context to this design preview. External reference photographs do not identify Siri
-                products, installations or partnerships.
+                Product photographs depict the aeration equipment and DB Bio-Organics aquaculture probiotic range featured on
+                this website.
               </p>
               <div className="credit-list">
                 <p>
-                  <strong>Aeration and hero imagery</strong>
+                  <strong>Aeration &amp; probiotic imagery</strong>
                   <br />
-                  Original AI-generated concept scene, created for this preview.
+                  Product photographs provided for Siri Aquatic Solutions Pvt. Ltd.
                 </p>
-                <p>
-                  <strong>Water pump reference photograph</strong>
-                  <br />
-                  <a href="https://www.freepnglogos.com/images/motor-20803.html" target="_blank" rel="noreferrer">
-                    View the original image source ↗
-                  </a>
-                </p>
-                <p>
-                  <strong>Aquaculture pond reference photograph</strong>
-                  <br />
-                  <a href="https://zjnews.zjol.com.cn/zjnews/202212/t20221205_25147358.shtml" target="_blank" rel="noreferrer">
-                    View the original image source ↗
-                  </a>
-                </p>
-                <p>Replace reference photographs with approved, licensed company assets before public commercial launch.</p>
               </div>
             </section>
           ) : path.startsWith('/legal') || path === '/accessibility' ? (
@@ -931,9 +1187,8 @@ function App() {
               <Breadcrumb name="Site information" />
               <h1>{path.includes('privacy') ? 'Your privacy.' : path === '/accessibility' ? 'Open to everyone.' : 'About this preview.'}</h1>
               <p>
-                This website is a design and catalogue preview for Siri Aquatic Solutions Pvt. Ltd. Product visuals are
-                illustrative; specifications, commercial terms, contact details and policies require company approval before
-                launch.
+                This website is a design and catalogue preview for Siri Aquatic Solutions Pvt. Ltd. Specifications, commercial
+                terms, contact details and policies require company approval before launch.
               </p>
               <p>
                 Enquiry details are processed only in your browser to create a downloadable file. They are not sent to a server.
@@ -955,9 +1210,10 @@ function App() {
               <Button to="/">Return home</Button>
             </section>
           )}
-        <FishCurrent /></main>
+          <FishCurrent />
+        </main>
 
-        {path === "/" && <TrustStrip/>}
+        {path === '/' && <TrustStrip />}
         <footer>
           <div className="footer-top" data-scroll="fade-up">
             <Link to="/" className="brand">
@@ -975,14 +1231,14 @@ function App() {
           <div className="footer-links">
             <div data-scroll="fade-up" style={{ '--scroll-delay': '0ms' } as React.CSSProperties}>
               <span>EXPLORE</span>
-              <Link to="/products">Our solutions</Link>
+              <Link to="/aerators">Aerators</Link>
+              <Link to="/probiotics">Probiotics</Link>
               <Link to="/about">Our story</Link>
-              <Link to="/quality">Our approach to quality</Link>
             </div>
             <div data-scroll="fade-up" style={{ '--scroll-delay': '100ms' } as React.CSSProperties}>
               <span>LET'S CONNECT</span>
-              <Link to="/request-a-quote">Prepare an enquiry</Link>
-              <Link to="/knowledge">Knowledge centre</Link>
+              <Link to="/request-a-quote">Request a quote</Link>
+              <Link to="/quality">Our approach to quality</Link>
               <Link to="/contact">Contact information</Link>
             </div>
             <div className="footer-note" data-scroll="fade-up" style={{ '--scroll-delay': '200ms' } as React.CSSProperties}>
@@ -1033,16 +1289,19 @@ function App() {
             <input
               autoFocus
               aria-label="Search site"
-              placeholder="Search equipment, pond care, guides…"
+              placeholder="Search aerators, probiotics, equipment…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </label>
           <div className="search-results">
             {[
-              ...products.map((p) => ({ name: p.name, url: `/products/${p.id}` })),
-              { name: 'Knowledge centre & checklists', url: '/knowledge' },
-              { name: 'Prepare an enquiry', url: '/request-a-quote' }
+              ...aeratorProducts.map((p) => ({ name: p.name, url: `/products/${p.id}` })),
+              ...spareEquipmentProducts.map((p) => ({ name: p.name, url: `/products/${p.id}` })),
+              ...probioticProducts.map((p) => ({ name: `${p.code} · ${p.name}`, url: `/probiotics#${p.id}` })),
+              { name: 'Aerators catalogue', url: '/aerators' },
+              { name: 'Probiotics & pond care', url: '/probiotics' },
+              { name: 'Request a quote', url: '/request-a-quote' }
             ]
               .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
               .map((p) => (
@@ -1058,7 +1317,7 @@ function App() {
                 </button>
               ))}
           </div>
-          <p>Search solution categories and helpful resources.</p>
+          <p>Search aerators, probiotics and quote options.</p>
         </div>
       </dialog>
     </>
@@ -1083,23 +1342,13 @@ createRoot(document.getElementById('root')!).render(
 );
 
 import './calm-layout.css';
-
 import './machine-hero.css';
-
 import './final-polish.css';
-
 import './readability-layout.css';
-
 import './gallery-frame.css';
-
 import './poster-hero.css';
-
 import './hero-focus.css';
-
 import './hero-brand-heading.css';
-
 import './clear-navigation.css';
-
-
-
 import './fish-current.css';
+import './catalog-cards.css';
