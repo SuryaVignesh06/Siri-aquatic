@@ -3,7 +3,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 // Pages serves directories directly, so each client route gets the same app entry.
 const routes = ['products', 'products/paddle-wheel', 'products/compact-aerator',
   'products/spiral-impeller', 'products/water-pumps', 'products/pond-equipment',
-  'products/pond-care', 'aerators', 'equipment', 'probiotics', 'solutions', 'about',
+  'products/pond-care', 'aerators', 'spares', 'equipment', 'probiotics', 'solutions', 'about',
   'quality', 'knowledge', 'request-a-quote', 'contact', 'image-credits',
   'legal/privacy', 'legal/terms', 'accessibility'];
 const html = await readFile('dist/index.html', 'utf8');
