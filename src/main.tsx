@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
   Search,
   Menu,
   X,
@@ -12,8 +14,6 @@ import {
   Droplets,
   Plus,
   Minus,
-  Check,
-  Download,
   MoveUpRight,
   Play,
   Pause
@@ -34,6 +34,15 @@ import { FloatingWhatsApp } from './FloatingWhatsApp';
 import { SectionDivider } from './SectionDivider';
 import { aeratorProducts, probioticProducts, spareEquipmentProducts } from './catalogData';
 import { ProbioticsPage } from './ProbioticsPage';
+import { QuotePage } from './QuotePage';
+import {
+  LanguageProvider,
+  useSiteLang,
+  siteText,
+  aeratorTeluguMap,
+  spareTeluguMap,
+  probioticTeluguMap
+} from './i18n';
 
 function Link(props: React.ComponentProps<typeof RouterLink>) {
   return <RouterLink {...props} viewTransition />;
@@ -59,30 +68,6 @@ interface CardDisplayItem {
   to: string;
   isProbiotic?: boolean;
 }
-
-const aeratorCardItems: CardDisplayItem[] = aeratorProducts.map((a) => ({
-  id: a.id,
-  series: a.series,
-  name: a.name,
-  desc: a.desc,
-  image: a.image,
-  alt: a.alt,
-  chips: a.chips,
-  to: `/products/${a.id}`,
-  isProbiotic: false
-}));
-
-const probioticCardItems: CardDisplayItem[] = probioticProducts.map((p) => ({
-  id: p.id,
-  series: `${p.code} · ${p.series}`,
-  name: p.name,
-  desc: p.subtitle,
-  image: p.image,
-  alt: `${p.name} — ${p.subtitle}`,
-  chips: p.chips,
-  to: `/probiotics#${p.id}`,
-  isProbiotic: true
-}));
 
 const allCatalogEntries = [
   ...aeratorProducts.map((a) => ({
@@ -170,8 +155,11 @@ interface HeaderProps {
 }
 
 function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps) {
+  const { lang, setLang } = useSiteLang();
+  const t = siteText[lang].nav;
   const isProbioticDetail = probioticProducts.some((p) => path === `/products/${p.id}`);
   const isAeratorDetail = aeratorProducts.some((a) => path === `/products/${a.id}`);
+  const isSpareDetail = spareEquipmentProducts.some((s) => path === `/products/${s.id}`);
   return (
     <header className={isHero ? 'calm-header calm-header-home' : 'calm-header calm-header-inner'}>
       <Link to="/" className="brand" aria-label="Siri Aquatic Solutions">
@@ -179,16 +167,18 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
       </Link>
       <nav aria-label="Main navigation" id="primary-navigation" className={menu ? 'open' : ''}>
         {[
-          ['/', 'Home'],
-          ['/aerators', 'Aerators'],
-          ['/probiotics', 'Probiotics'],
-          ['/about', 'Our story']
+          ['/', t.home],
+          ['/aerators', t.aerators],
+          ['/spares', t.spares],
+          ['/probiotics', t.probiotics],
+          ['/about', t.story]
         ].map(([url, name]) => {
           const isActive =
             url === '/'
               ? path === '/'
               : path === url ||
                 path.startsWith(url + '/') ||
+                (url === '/spares' && (path === '/equipment' || isSpareDetail)) ||
                 (url === '/probiotics' && isProbioticDetail) ||
                 (url === '/aerators' && isAeratorDetail);
           return (
@@ -199,22 +189,40 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
         })}
       </nav>
       <div className="header-actions">
+        <div className="site-lang-switch" role="group" aria-label="Website language">
+          <button
+            type="button"
+            className={lang === 'en' ? 'is-active' : ''}
+            aria-pressed={lang === 'en'}
+            onClick={() => setLang('en')}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            className={lang === 'te' ? 'is-active' : ''}
+            aria-pressed={lang === 'te'}
+            onClick={() => setLang('te')}
+          >
+            తెలుగు
+          </button>
+        </div>
         <button
           className="icon-button search-trigger"
-          aria-label="Search"
+          aria-label={t.searchAria}
           onClick={() => setSearch(true)}
           type="button"
         >
           <Search size={19} />
         </button>
         <Link to="/request-a-quote" className="header-quote">
-          Quote <ArrowUpRight size={17} />
+          {t.quote} <ArrowUpRight size={17} />
         </Link>
         <button
           className="icon-button menu-toggle"
           aria-expanded={menu}
           aria-controls="primary-navigation"
-          aria-label={menu ? 'Close menu' : 'Open menu'}
+          aria-label={menu ? t.closeMenu : t.openMenu}
           onClick={() => setMenu((prev) => !prev)}
           type="button"
         >
@@ -225,86 +233,38 @@ function Header({ isHero = false, menu, setMenu, setSearch, path }: HeaderProps)
   );
 }
 
-const HERO_VIDEO_SPEED = 0.58;
-
 function HeroAtmosphere({ reduced }: { reduced: boolean }) {
-  const videoZero = useRef<HTMLVideoElement>(null);
-  const videoOne = useRef<HTMLVideoElement>(null);
+  const ref = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [activeVideo, setActiveVideo] = useState<0 | 1>(0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.1 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const videos = [videoZero.current, videoOne.current];
-    videos.forEach((v) => {
-      if (v) {
-        v.defaultPlaybackRate = HERO_VIDEO_SPEED;
-        v.playbackRate = HERO_VIDEO_SPEED;
-      }
-    });
-    const current = videos[activeVideo];
-    const other = videos[activeVideo === 0 ? 1 : 0];
-    if (other) other.pause();
-    if (!current) return;
-    if (visible && !reduced && !paused) {
-      current.playbackRate = HERO_VIDEO_SPEED;
-      current.play().catch(() => {});
-    } else {
-      current.pause();
-    }
-  }, [activeVideo, visible, reduced, paused]);
-
-  const applySlowRate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    e.currentTarget.defaultPlaybackRate = HERO_VIDEO_SPEED;
-    e.currentTarget.playbackRate = HERO_VIDEO_SPEED;
-  };
-
-  const switchTo = (next: 0 | 1) => {
-    const nextVideo = next === 0 ? videoZero.current : videoOne.current;
-    if (nextVideo) {
-      nextVideo.currentTime = 0;
-      nextVideo.defaultPlaybackRate = HERO_VIDEO_SPEED;
-      nextVideo.playbackRate = HERO_VIDEO_SPEED;
-      if (visible && !reduced && !paused) {
-        nextVideo.play().catch(() => {});
-      }
-    }
-    setActiveVideo(next);
-  };
+    const v = ref.current;
+    if (!v) return;
+    const observer = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !reduced && !paused) v.play().catch(() => {});
+        else v.pause();
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(v);
+    if (reduced || paused) v.pause();
+    return () => {
+      observer.disconnect();
+      v.pause();
+    };
+  }, [reduced, paused]);
 
   return (
     <>
-      <div ref={containerRef} className="hero-atmosphere" aria-hidden="true">
+      <div className="hero-atmosphere" aria-hidden="true">
         <video
-          ref={videoZero}
-          className={`hero-video-layer${activeVideo === 0 ? ' is-active' : ''}`}
-          src={assetUrl('/intro-one.mp4')}
+          ref={ref}
+          src={assetUrl('/hero-water-combined.mp4')}
           muted
+          loop
           playsInline
           preload="auto"
-          onLoadedMetadata={applySlowRate}
-          onPlay={applySlowRate}
-          onEnded={() => switchTo(1)}
-        />
-        <video
-          ref={videoOne}
-          className={`hero-video-layer${activeVideo === 1 ? ' is-active' : ''}`}
-          src={assetUrl('/intro-two.mp4')}
-          muted
-          playsInline
-          preload="auto"
-          onLoadedMetadata={applySlowRate}
-          onPlay={applySlowRate}
-          onEnded={() => switchTo(0)}
         />
       </div>
       <button
@@ -353,6 +313,9 @@ function HeroSection({
   setSearch: React.Dispatch<React.SetStateAction<boolean>>;
   path: string;
 }) {
+  const { lang } = useSiteLang();
+  const t = siteText[lang].hero;
+
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [activeEquipment, setActiveEquipment] = useState(0);
@@ -374,9 +337,9 @@ function HeroSection({
   }, []);
 
   const equipment = [
-    { src: assetUrl('/images/aerator-4paddle-real.png'), name: 'Pro-4 Paddle Wheel Aerator', to: '/products/paddle-wheel' },
-    { src: assetUrl('/images/aerator-2paddle-real.png'), name: 'Turbo-2 Compact Aerator', to: '/products/compact-aerator' },
-    { src: assetUrl('/images/aerator-impeller-real.png'), name: 'Surge Floating Impeller', to: '/products/spiral-impeller' }
+    { src: assetUrl('/images/aerator-4paddle-real.png'), name: t.carouselNames[0], to: '/products/paddle-wheel' },
+    { src: assetUrl('/images/aerator-2paddle-real.png'), name: t.carouselNames[1], to: '/products/compact-aerator' },
+    { src: assetUrl('/images/aerator-impeller-real.png'), name: t.carouselNames[2], to: '/products/spiral-impeller' }
   ];
 
   return (
@@ -384,7 +347,7 @@ function HeroSection({
       <HeroAtmosphere reduced={reduced} />
       <div className="poster-hero-content">
         <div className="poster-heading">
-          <span className="poster-eyebrow">QUALITY COMES FIRST</span>
+          <span className="poster-eyebrow">{t.eyebrow}</span>
           <h1 className="hero-brand-heading" aria-label="Siri Aquatic Solutions Pvt. Ltd.">
             <HeroWordmark />
           </h1>
@@ -406,7 +369,7 @@ function HeroSection({
             const side = position === 0 ? 'center' : position === 1 ? 'right' : 'left';
             return (
               <Link
-                key={item.name}
+                key={item.to}
                 to={item.to}
                 className={`hero-focus-item is-${side}`}
                 aria-current={position === 0 ? 'true' : undefined}
@@ -433,7 +396,7 @@ function HeroSection({
           <div className="hero-focus-dots" role="group" aria-label="Choose featured aerator">
             {equipment.map((item, index) => (
               <button
-                key={item.name}
+                key={item.to}
                 type="button"
                 aria-label={`Feature ${item.name}`}
                 aria-pressed={activeEquipment === index}
@@ -446,7 +409,7 @@ function HeroSection({
         </div>
         <div className="poster-hero-bottom">
           <p>
-            Aquaculture equipment. <span>Thoughtful pond solutions.</span>
+            {t.taglineLead} <span>{t.taglineSub}</span>
           </p>
           <button
             type="button"
@@ -456,7 +419,9 @@ function HeroSection({
             onClick={() => setPaused(!paused)}
           >
             {paused ? <Play size={15} /> : <Pause size={15} />}
-            <span>{paused ? 'Play' : 'Pause'} products</span>
+            <span>
+              {paused ? t.play : t.pause} {t.productsWord}
+            </span>
           </button>
         </div>
       </div>
@@ -467,11 +432,12 @@ function HeroSection({
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { lang } = useSiteLang();
+  const t = siteText[lang];
 
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
   const [query, setQuery] = useState('');
-  const [homeFilter, setHomeFilter] = useState<'All' | 'Aerators' | 'Probiotics'>('All');
   const [manualReduced, setReduced] = useState(() => localStorage.getItem('siri-motion') === 'reduced');
   const [systemReduced, setSystemReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const reduced = manualReduced || systemReduced;
@@ -481,11 +447,55 @@ function App() {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
-  const [saved, setSaved] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
 
   const path = location.pathname.replace(/\/+$/, '') || '/';
   const activeProduct = allCatalogEntries.find((p) => path === `/products/${p.id}`);
+
+  const aeratorCardItems: CardDisplayItem[] = aeratorProducts.map((a) => {
+    const te = lang === 'te' ? aeratorTeluguMap[a.id] : undefined;
+    return {
+      id: a.id,
+      series: te ? te.series : a.series,
+      name: te ? te.name : a.name,
+      desc: te ? te.desc : a.desc,
+      image: a.image,
+      alt: a.alt,
+      chips: te ? te.chips : a.chips,
+      to: `/products/${a.id}`,
+      isProbiotic: false
+    };
+  });
+
+  const spareCardItems: CardDisplayItem[] = spareEquipmentProducts.map((s) => {
+    const te = lang === 'te' ? spareTeluguMap[s.id] : undefined;
+    return {
+      id: s.id,
+      series: te ? te.tag : s.tag,
+      name: te ? te.name : s.name,
+      desc: te ? te.desc : s.desc,
+      image: s.image,
+      alt: s.alt,
+      chips: te ? te.chips : s.chips,
+      to: `/products/${s.id}`,
+      isProbiotic: false
+    };
+  });
+
+  const probioticCardItems: CardDisplayItem[] = probioticProducts.map((p) => {
+    const te = lang === 'te' ? probioticTeluguMap[p.id] : undefined;
+    return {
+      id: p.id,
+      series: `${p.code} · ${te ? te.series : p.series}`,
+      name: p.name,
+      desc: te ? te.subtitle : p.subtitle,
+      image: p.image,
+      alt: `${p.name} — ${p.subtitle}`,
+      chips: te ? te.chips : p.chips,
+      to: `/probiotics#${p.id}`,
+      isProbiotic: true
+    };
+  });
 
   // Scroll to top on route change (unless hash anchor)
   useEffect(() => {
@@ -493,7 +503,6 @@ function App() {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
     setMenu(false);
-    setSaved(false);
   }, [path, location.hash]);
 
   // One navigation bar smoothly gains a rounded surface when the page scrolls.
@@ -559,7 +568,7 @@ function App() {
     return () => {
       observer.disconnect();
     };
-  }, [path, homeFilter, activeProduct, query]);
+  }, [path, activeProduct, query, lang]);
 
   // Scroll reading progress
   useEffect(() => {
@@ -607,17 +616,10 @@ function App() {
     return () => window.removeEventListener('keydown', key);
   }, []);
 
-  const cards = (items: CardDisplayItem[]) => (
-    <div className="product-grid stagger-container">
+  const cards = (items: CardDisplayItem[], gridClass = '', railRef?: React.RefObject<HTMLDivElement | null>) => (
+    <div ref={railRef} className={`product-grid ${gridClass} stagger-container`}>
       {items.map((item, i) => (
-        <Link
-          data-scroll="fade-up"
-          data-reveal
-          className="product-card"
-          to={item.to}
-          key={item.id}
-          style={{ '--scroll-delay': `${(i % 6) * 90}ms` } as React.CSSProperties}
-        >
+        <Link className="product-card" to={item.to} key={item.id}>
           <div className={`product-art tone-${i % 3}`}>
             <img
               className={`card-photo ${item.isProbiotic ? 'probiotic-card-photo' : 'product-cutout-photo'} loaded`}
@@ -649,31 +651,28 @@ function App() {
     </div>
   );
 
-  const homepageItems: CardDisplayItem[] =
-    homeFilter === 'Aerators'
-      ? aeratorCardItems
-      : homeFilter === 'Probiotics'
-      ? probioticCardItems
-      : [
-          aeratorCardItems[0],
-          aeratorCardItems[1],
-          aeratorCardItems[2],
-          probioticCardItems[0],
-          probioticCardItems[4],
-          probioticCardItems[6]
-        ];
+  const aeratorRailRef = useRef<HTMLDivElement>(null);
+  const sparesRailRef = useRef<HTMLDivElement>(null);
+  const probioticsRailRef = useRef<HTMLDivElement>(null);
+
+  const scrollRail = (rail: React.RefObject<HTMLDivElement | null>, dir: -1 | 1) => {
+    const el = rail.current;
+    if (!el) return;
+    const step = Math.max(300, el.clientWidth * 0.72);
+    el.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
 
   const cta = (
     <section className="cta" data-scroll="zoom-in" data-reveal>
       <div>
-        <span className="eyebrow">LET'S TALK ABOUT YOUR POND</span>
+        <span className="eyebrow">{t.cta.eyebrow}</span>
         <h2>
-          Good things start
+          {t.cta.h2a}
           <br />
-          with a conversation.
+          {t.cta.h2b}
         </h2>
       </div>
-      <Button to="/request-a-quote">Find your solution</Button>
+      <Button to="/request-a-quote">{t.cta.btn}</Button>
     </section>
   );
 
@@ -685,7 +684,7 @@ function App() {
       <FloatingWhatsApp />
 
       <a className="skip" href="#main">
-        Skip to content
+        {t.nav.skip}
       </a>
       <div className="reading-progress" aria-hidden="true" />
 
@@ -711,57 +710,113 @@ function App() {
 
               <div className="principles stagger-container" data-scroll="fade-up">
                 <span>
-                  <Waves /> Equipment for aquaculture
+                  <Waves /> {t.principles.p1}
                 </span>
                 <span>
-                  <Settings2 /> Guidance for your requirements
+                  <Settings2 /> {t.principles.p2}
                 </span>
                 <span>
-                  <Droplets /> A pond-first perspective
+                  <Droplets /> {t.principles.p3}
                 </span>
                 <span className="aeration-badge">
                   <span className="aeration-pulse-dot" />
-                  Active Aeration
+                  {t.principles.badge}
                 </span>
                 <span className="principle-tag">
-                  QUALITY COMES FIRST <ArrowUpRight size={17} />
+                  {t.principles.tag} <ArrowUpRight size={17} />
                 </span>
               </div>
 
-              {/* Shop by category with Aerators / Probiotics filter */}
+              {/* Shop by category — Separate side-scrollable subsections */}
               <section id="range" className="section range">
                 <div className="section-heading" data-scroll="fade-up" data-reveal>
                   <div>
-                    <span className="eyebrow">01 / THE RIGHT START</span>
+                    <span className="eyebrow">{t.range.eyebrow}</span>
                     <h2>
-                      Find the equipment
+                      {t.range.h2a}
                       <br />
-                      you need.
+                      {t.range.h2b}
                     </h2>
                   </div>
                   <div className="section-intro">
-                    <p>Different ponds. Different needs. Filter by aerators or probiotics to explore our range.</p>
-                    <Link className="text-link dark" to={homeFilter === 'Probiotics' ? '/probiotics' : '/aerators'}>
-                      Explore {homeFilter === 'Probiotics' ? 'all probiotics' : 'all aerators'} <ArrowUpRight size={18} />
+                    <p>{t.range.intro}</p>
+                    <Link className="text-link dark" to="/aerators">
+                      {t.range.exploreAllAerators} <ArrowUpRight size={18} />
                     </Link>
                   </div>
                 </div>
 
-                <div className="range-filter-bar" role="group" aria-label="Filter equipment and probiotics">
-                  {(['All', 'Aerators', 'Probiotics'] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      type="button"
-                      className={`range-filter-pill ${homeFilter === tab ? 'is-active' : ''}`}
-                      aria-pressed={homeFilter === tab}
-                      onClick={() => setHomeFilter(tab)}
-                    >
-                      {tab}
-                    </button>
-                  ))}
+                {/* Subsection 1: Aerators */}
+                <div className="range-subsection" id="range-aerators">
+                  <div className="range-subsection-head">
+                    <div>
+                      <span className="eyebrow">{t.range.sub1Eyebrow}</span>
+                      <h3>{t.range.sub1Title}</h3>
+                    </div>
+                    <div className="range-subsection-actions">
+                      <div className="rail-scroll-controls">
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll aerators left" onClick={() => scrollRail(aeratorRailRef, -1)}>
+                          <ArrowLeft size={16} />
+                        </button>
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll aerators right" onClick={() => scrollRail(aeratorRailRef, 1)}>
+                          <ArrowRight size={16} />
+                        </button>
+                      </div>
+                      <Link className="text-link dark" to="/aerators">
+                        {t.range.sub1Link} <ArrowUpRight size={17} />
+                      </Link>
+                    </div>
+                  </div>
+                  {cards(aeratorCardItems, 'product-rail', aeratorRailRef)}
                 </div>
 
-                {cards(homepageItems)}
+                {/* Subsection 2: Equipment & Spares */}
+                <div className="range-subsection" id="range-spares">
+                  <div className="range-subsection-head">
+                    <div>
+                      <span className="eyebrow">{t.range.sub2Eyebrow}</span>
+                      <h3>{t.range.sub2Title}</h3>
+                    </div>
+                    <div className="range-subsection-actions">
+                      <div className="rail-scroll-controls">
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll spares left" onClick={() => scrollRail(sparesRailRef, -1)}>
+                          <ArrowLeft size={16} />
+                        </button>
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll spares right" onClick={() => scrollRail(sparesRailRef, 1)}>
+                          <ArrowRight size={16} />
+                        </button>
+                      </div>
+                      <Link className="text-link dark" to="/spares">
+                        {t.range.sub2Link} <ArrowUpRight size={17} />
+                      </Link>
+                    </div>
+                  </div>
+                  {cards(spareCardItems, 'product-rail', sparesRailRef)}
+                </div>
+
+                {/* Subsection 3: Probiotics */}
+                <div className="range-subsection" id="range-probiotics">
+                  <div className="range-subsection-head">
+                    <div>
+                      <span className="eyebrow">{t.range.sub3Eyebrow}</span>
+                      <h3>{t.range.sub3Title}</h3>
+                    </div>
+                    <div className="range-subsection-actions">
+                      <div className="rail-scroll-controls">
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll probiotics left" onClick={() => scrollRail(probioticsRailRef, -1)}>
+                          <ArrowLeft size={16} />
+                        </button>
+                        <button type="button" className="rail-scroll-btn" aria-label="Scroll probiotics right" onClick={() => scrollRail(probioticsRailRef, 1)}>
+                          <ArrowRight size={16} />
+                        </button>
+                      </div>
+                      <Link className="text-link dark" to="/probiotics">
+                        {t.range.sub3Link} <ArrowUpRight size={17} />
+                      </Link>
+                    </div>
+                  </div>
+                  {cards(probioticCardItems, 'product-rail', probioticsRailRef)}
+                </div>
               </section>
 
               <SectionDivider />
@@ -769,131 +824,149 @@ function App() {
               {/* Product Showcase: In Our Element */}
               <ProductShowcase />
 
-              {/* Equipment & Spares section after In Our Element */}
-              <section id="spares" className="spares-section" aria-labelledby="spares-heading">
-                <div className="spares-shell">
-                  <div className="spares-header" data-scroll="fade-up" data-reveal>
-                    <div>
-                      <span className="eyebrow">EQUIPMENT &amp; SPARES</span>
-                      <h2 id="spares-heading">
-                        Feeders, pumps &amp; every spare part.
-                      </h2>
-                    </div>
-                    <p className="spares-lead">
-                      Beyond aeration, Siri Aquatic supplies the full pond ecosystem — automatic feeders, engines,
-                      pumps, gearboxes, control panels and genuine replacement parts.
-                    </p>
-                  </div>
-
-                  <div className="spares-grid stagger-container">
-                    {spareEquipmentProducts.map((item, idx) => (
-                      <Link
-                        key={item.id}
-                        to={`/products/${item.id}`}
-                        className="spares-card"
-                        data-scroll="fade-up"
-                        data-reveal
-                        style={{ '--scroll-delay': `${idx * 90}ms` } as React.CSSProperties}
-                      >
-                        <div className="spares-card-media">
-                          <img src={item.image} alt={item.alt} loading="lazy" decoding="async" />
-                          <span className="spares-card-arrow">
-                            <ArrowUpRight size={17} />
-                          </span>
-                        </div>
-                        <div className="spares-card-body">
-                          <div>
-                            <span className="spares-card-tag">{item.tag}</span>
-                            <h3>{item.name}</h3>
-                            <p>{item.desc}</p>
-                          </div>
-                          <div className="product-spec-chips">
-                            {item.chips.map((chip) => (
-                              <span key={chip}>{chip}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
               {cta}
             </>
-          ) : path === '/aerators' || path === '/products' || path === '/equipment' ? (
+          ) : path === '/spares' || path === '/equipment' ? (
             <section className="section inner" data-scroll="fade-up">
-              <Breadcrumb name="Aerators" />
-              <span className="eyebrow">AERATION SYSTEMS</span>
+              <Breadcrumb name={t.sparesPage.breadcrumb} />
+              <span className="eyebrow">{t.sparesPage.eyebrow}</span>
               <h1>
-                Aerators built for
+                {t.sparesPage.h1a}
                 <br />
-                every pond.
+                {t.sparesPage.h1b}
               </h1>
-              <p className="lead">
-                Explore our complete range of paddle wheel, compact, impeller, and diffused aeration systems with key specifications below.
-              </p>
+              <p className="lead">{t.sparesPage.lead}</p>
+              {cards(spareCardItems, 'product-grid-4')}
 
-              {cards(aeratorCardItems)}
-
-              {/* Full Technical Specifications directly below the aerator cards */}
-              <div className="aerator-specs-matrix" id="specifications">
+              <div className="aerator-specs-matrix" id="spares-specifications">
                 <div className="aerator-specs-matrix-head">
                   <div>
-                    <span className="eyebrow">TECHNICAL SPECIFICATIONS</span>
-                    <h2>Specifications at a glance.</h2>
+                    <span className="eyebrow">{t.sparesPage.specsEyebrow}</span>
+                    <h2>{t.sparesPage.specsTitle}</h2>
                   </div>
-                  <p>Compare motor ratings, float configurations, power supply, and pond coverage across every aerator model.</p>
+                  <p>{t.sparesPage.specsLead}</p>
                 </div>
 
                 <div className="aerator-spec-cards-grid">
-                  {aeratorProducts.map((item) => (
-                    <article key={item.id} className="aerator-spec-detail-card">
-                      <div className="aerator-spec-detail-top">
-                        <div>
-                          <span>{item.series}</span>
-                          <h3>{item.name}</h3>
+                  {spareEquipmentProducts.map((item) => {
+                    const te = lang === 'te' ? spareTeluguMap[item.id] : undefined;
+                    return (
+                      <article key={item.id} className="aerator-spec-detail-card">
+                        <div className="aerator-spec-detail-top">
+                          <div>
+                            <span>{te ? te.tag : item.tag}</span>
+                            <h3>{te ? te.name : item.name}</h3>
+                          </div>
+                          <Link to={`/request-a-quote?product=${item.id}`}>
+                            {t.sparesPage.quoteBtn} <ArrowUpRight size={14} />
+                          </Link>
                         </div>
-                        <Link to={`/request-a-quote?product=${item.id}`}>
-                          Quote <ArrowUpRight size={14} />
-                        </Link>
-                      </div>
-                      <dl className="aerator-spec-dl">
-                        <div>
-                          <dt>Motor / Power</dt>
-                          <dd>{item.specs.power}</dd>
+                        <dl className="aerator-spec-dl">
+                          <div>
+                            <dt>{t.sparesPage.labels.category}</dt>
+                            <dd>{item.specs.category}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.sparesPage.labels.capacity}</dt>
+                            <dd>{item.specs.capacity}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.sparesPage.labels.build}</dt>
+                            <dd>{item.specs.build}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.sparesPage.labels.compatibility}</dt>
+                            <dd>{item.specs.compatibility}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.sparesPage.labels.power}</dt>
+                            <dd>{item.specs.power}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.sparesPage.labels.warranty}</dt>
+                            <dd>{item.specs.warranty}</dd>
+                          </div>
+                        </dl>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+              {cta}
+            </section>
+          ) : path === '/aerators' || path === '/products' ? (
+            <section className="section inner" data-scroll="fade-up">
+              <Breadcrumb name={t.aeratorsPage.breadcrumb} />
+              <span className="eyebrow">{t.aeratorsPage.eyebrow}</span>
+              <h1>
+                {t.aeratorsPage.h1a}
+                <br />
+                {t.aeratorsPage.h1b}
+              </h1>
+              <p className="lead">{t.aeratorsPage.lead}</p>
+
+              {cards(aeratorCardItems)}
+
+              <div className="aerator-specs-matrix" id="specifications">
+                <div className="aerator-specs-matrix-head">
+                  <div>
+                    <span className="eyebrow">{t.aeratorsPage.specsEyebrow}</span>
+                    <h2>{t.aeratorsPage.specsTitle}</h2>
+                  </div>
+                  <p>{t.aeratorsPage.specsLead}</p>
+                </div>
+
+                <div className="aerator-spec-cards-grid">
+                  {aeratorProducts.map((item) => {
+                    const te = lang === 'te' ? aeratorTeluguMap[item.id] : undefined;
+                    return (
+                      <article key={item.id} className="aerator-spec-detail-card">
+                        <div className="aerator-spec-detail-top">
+                          <div>
+                            <span>{te ? te.series : item.series}</span>
+                            <h3>{te ? te.name : item.name}</h3>
+                          </div>
+                          <Link to={`/request-a-quote?product=${item.id}`}>
+                            {t.aeratorsPage.quoteBtn} <ArrowUpRight size={14} />
+                          </Link>
                         </div>
-                        <div>
-                          <dt>Configuration</dt>
-                          <dd>{item.specs.configuration}</dd>
-                        </div>
-                        <div>
-                          <dt>Floats / Assembly</dt>
-                          <dd>{item.specs.floats}</dd>
-                        </div>
-                        <div>
-                          <dt>Power Supply</dt>
-                          <dd>{item.specs.supply}</dd>
-                        </div>
-                        <div>
-                          <dt>Pond Coverage</dt>
-                          <dd>{item.specs.coverage}</dd>
-                        </div>
-                        <div>
-                          <dt>Oxygen Transfer</dt>
-                          <dd>{item.specs.otr}</dd>
-                        </div>
-                        <div>
-                          <dt>Frame &amp; Build</dt>
-                          <dd>{item.specs.frame}</dd>
-                        </div>
-                        <div>
-                          <dt>Warranty</dt>
-                          <dd>{item.specs.warranty}</dd>
-                        </div>
-                      </dl>
-                    </article>
-                  ))}
+                        <dl className="aerator-spec-dl">
+                          <div>
+                            <dt>{t.aeratorsPage.labels.power}</dt>
+                            <dd>{item.specs.power}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.configuration}</dt>
+                            <dd>{item.specs.configuration}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.floats}</dt>
+                            <dd>{item.specs.floats}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.supply}</dt>
+                            <dd>{item.specs.supply}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.coverage}</dt>
+                            <dd>{item.specs.coverage}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.otr}</dt>
+                            <dd>{item.specs.otr}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.frame}</dt>
+                            <dd>{item.specs.frame}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.aeratorsPage.labels.warranty}</dt>
+                            <dd>{item.specs.warranty}</dd>
+                          </div>
+                        </dl>
+                      </article>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -917,13 +990,13 @@ function App() {
                   <span className="eyebrow">{activeProduct.category}</span>
                   <h1>{activeProduct.name}</h1>
                   <p className="lead">{activeProduct.desc}</p>
-                  <p>Tell us about your pond requirements to discuss configurations, dosing, and current pricing.</p>
-                  <Button to={`/request-a-quote?product=${activeProduct.id}`}>Prepare an enquiry</Button>
+                  <p>{t.detailPage.intro}</p>
+                  <Button to={`/request-a-quote?product=${activeProduct.id}`}>{t.detailPage.prepare}</Button>
                 </div>
               </div>
               <div className="spec-section" data-scroll="fade-up">
-                <h2>Details that matter.</h2>
-                <p>Technical specifications and application details.</p>
+                <h2>{t.detailPage.specsHeading}</h2>
+                <p>{t.detailPage.specsSub}</p>
                 {activeProduct.specRows.map(([label, val], idx) => (
                   <div className="spec-row" key={label} data-scroll="fade-up" style={{ '--scroll-delay': `${idx * 70}ms` } as React.CSSProperties}>
                     <span>{label}</span>
@@ -934,133 +1007,7 @@ function App() {
               {cta}
             </section>
           ) : path === '/request-a-quote' || path === '/contact' ? (
-            <section className="section inner" data-scroll="fade-up">
-              <Breadcrumb name="Quote" />
-              <div className="quote-grid">
-                <div data-scroll="fade-right">
-                  <span className="eyebrow">EVERY POND HAS A STORY</span>
-                  <h1>
-                    Let's start
-                    <br />
-                    with yours.
-                  </h1>
-                  <p className="lead">A few details help make the conversation more useful.</p>
-                  <div className="steps">
-                    <p>
-                      <span>01</span> Tell us what you're looking for
-                    </p>
-                    <p>
-                      <span>02</span> Save your enquiry brief
-                    </p>
-                    <p>
-                      <span>03</span> Share it with your Siri representative
-                    </p>
-                  </div>
-                  <div className="notice">
-                    This preview saves an enquiry file to your device. It does not send your details. Direct contact options will
-                    appear once the company’s phone and email are verified.
-                  </div>
-                </div>
-                <form
-                  data-scroll="fade-left"
-                  className="quote-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const data = Object.fromEntries(new FormData(e.currentTarget));
-                    const blob = new Blob(
-                      [
-                        `SIRI AQUATIC — ENQUIRY BRIEF\n\n${Object.entries(data)
-                          .map(([k, v]) => `${k}: ${v}`)
-                          .join('\n')}\n\nPrepared locally. Not submitted to Siri.`
-                      ],
-                      { type: 'text/plain' }
-                    );
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = 'siri-aquatic-enquiry.txt';
-                    a.click();
-                    URL.revokeObjectURL(a.href);
-                    setSaved(true);
-                  }}
-                >
-                  <h2>Your pond. Your plans.</h2>
-                  <div className="form-row">
-                    <label>
-                      Your name
-                      <input name="Name" required autoComplete="name" placeholder="Full name" />
-                    </label>
-                    <label>
-                      Phone number
-                      <input
-                        name="Phone"
-                        type="tel"
-                        required
-                        autoComplete="tel"
-                        pattern="[+0-9 ()-]{7,20}"
-                        placeholder="+91"
-                      />
-                    </label>
-                  </div>
-                  <label>
-                    Email address
-                    <input name="Email" type="email" required autoComplete="email" placeholder="you@company.com" />
-                  </label>
-                  <label>
-                    I'm interested in
-                    <select
-                      name="Interest"
-                      defaultValue={allCatalogEntries.find((p) => p.id === new URLSearchParams(location.search).get('product'))?.name || ''}
-                    >
-                      <option value="">Help me choose</option>
-                      <optgroup label="Aerators">
-                        {aeratorProducts.map((p) => (
-                          <option key={p.id}>{p.name}</option>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Equipment &amp; Spares">
-                        {spareEquipmentProducts.map((p) => (
-                          <option key={p.id}>{p.name}</option>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Probiotics &amp; Pond Care">
-                        {probioticProducts.map((p) => (
-                          <option key={p.id}>{p.name}</option>
-                        ))}
-                      </optgroup>
-                    </select>
-                  </label>
-                  <div className="form-row">
-                    <label>
-                      Pond area (optional)
-                      <input name="Pond area" placeholder="Include units, e.g. 2 acres" />
-                    </label>
-                    <label>
-                      Location
-                      <input name="Location" required placeholder="Town / state" />
-                    </label>
-                  </div>
-                  <label>
-                    A little about your requirements
-                    <textarea
-                      name="Requirements"
-                      rows={4}
-                      placeholder="Pond depth, available power, species or equipment needs…"
-                    />
-                  </label>
-                  <label className="checkbox">
-                    <input type="checkbox" required /> I understand this file is saved locally and isn't sent to Siri.
-                  </label>
-                  <button className="button" type="submit">
-                    Save enquiry brief <Download size={18} />
-                  </button>
-                  {saved && (
-                    <p className="success" role="status">
-                      <Check size={18} /> Your brief is ready. Share the downloaded file with your representative.
-                    </p>
-                  )}
-                </form>
-              </div>
-            </section>
+            <QuotePage />
           ) : path === '/knowledge' ? (
             <section className="section inner" data-scroll="fade-up">
               <Breadcrumb name="Knowledge" />
@@ -1112,8 +1059,8 @@ function App() {
                       <Plus size={20} />
                     </summary>
                     <ul>
-                      {(items as string[]).map((t) => (
-                        <li key={t}>{t}</li>
+                      {(items as string[]).map((text) => (
+                        <li key={text}>{text}</li>
                       ))}
                     </ul>
                   </details>
@@ -1126,41 +1073,41 @@ function App() {
             </section>
           ) : path === '/about' || path === '/quality' || path === '/solutions' ? (
             <section className="section inner" data-scroll="fade-up">
-              <Breadcrumb name={path === '/about' ? 'Our story' : path === '/quality' ? 'Quality' : 'Solutions'} />
-              <span className="eyebrow">SIRI AQUATIC SOLUTIONS PVT. LTD.</span>
+              <Breadcrumb
+                name={
+                  path === '/about'
+                    ? t.aboutPage.story
+                    : path === '/quality'
+                    ? t.aboutPage.quality
+                    : t.aboutPage.solutions
+                }
+              />
+              <span className="eyebrow">{t.aboutPage.eyebrow}</span>
               <h1>
                 {path === '/solutions' ? (
                   <>
-                    One pond.
+                    {t.aboutPage.h1SolA}
                     <br />
-                    Connected needs.
+                    {t.aboutPage.h1SolB}
                   </>
                 ) : (
                   <>
-                    Quality comes first.
+                    {t.aboutPage.h1StoryA}
                     <br />
-                    Always the intention.
+                    {t.aboutPage.h1StoryB}
                   </>
                 )}
               </h1>
               <div className="editorial">
                 <div data-scroll="fade-right">
-                  <p className="lead">
-                    Aquaculture starts with understanding the water, the equipment and the people who work with both.
-                  </p>
-                  <p>
-                    Siri Aquatic brings equipment and pond-solution conversations together. Explore aeration, machinery and
-                    spares, and pond-care categories with your requirements in mind.
-                  </p>
-                  <p>
-                    Our guiding principle is simple: Quality Comes First. Before selecting equipment, ask for approved
-                    specifications, current documentation and clear support terms.
-                  </p>
-                  <Button to="/request-a-quote">Start a conversation</Button>
+                  <p className="lead">{t.aboutPage.lead}</p>
+                  <p>{t.aboutPage.p1}</p>
+                  <p>{t.aboutPage.p2}</p>
+                  <Button to="/request-a-quote">{t.aboutPage.cta}</Button>
                 </div>
                 <div className="brand-panel" data-scroll="zoom-in">
                   <Mark large />
-                  <span>QUALITY COMES FIRST</span>
+                  <span>{t.aboutPage.badge}</span>
                 </div>
               </div>
               {cards(aeratorCardItems.slice(0, 3))}
@@ -1191,8 +1138,8 @@ function App() {
                 terms, contact details and policies require company approval before launch.
               </p>
               <p>
-                Enquiry details are processed only in your browser to create a downloadable file. They are not sent to a server.
-                This site stores only your animation preference locally and uses no analytics or advertising cookies.
+                Enquiry details are processed only in your browser to create a formatted WhatsApp message. This site stores
+                only your language and animation preferences locally and uses no analytics or advertising cookies.
               </p>
               <p>
                 Keyboard navigation, visible focus states, semantic controls and reduced-motion support are included. You can
@@ -1220,47 +1167,49 @@ function App() {
               <Brand />
             </Link>
             <p>
-              A little care. A better tomorrow.
+              {t.footer.tag}
               <br />
-              <span>Quality Comes First.</span>
+              <span>{t.footer.quality}</span>
             </p>
             <Link to="/request-a-quote" className="footer-talk">
-              Let’s make ripples. <MoveUpRight />
+              {t.footer.ripples} <MoveUpRight />
             </Link>
           </div>
           <div className="footer-links">
             <div data-scroll="fade-up" style={{ '--scroll-delay': '0ms' } as React.CSSProperties}>
-              <span>EXPLORE</span>
-              <Link to="/aerators">Aerators</Link>
-              <Link to="/probiotics">Probiotics</Link>
-              <Link to="/about">Our story</Link>
+              <span>{t.footer.explore}</span>
+              <Link to="/aerators">{t.nav.aerators}</Link>
+              <Link to="/spares">{t.nav.spares}</Link>
+              <Link to="/probiotics">{t.nav.probiotics}</Link>
+              <Link to="/about">{t.nav.story}</Link>
             </div>
             <div data-scroll="fade-up" style={{ '--scroll-delay': '100ms' } as React.CSSProperties}>
-              <span>LET'S CONNECT</span>
-              <Link to="/request-a-quote">Request a quote</Link>
-              <Link to="/quality">Our approach to quality</Link>
-              <Link to="/contact">Contact information</Link>
+              <span>{t.footer.connect}</span>
+              <Link to="/request-a-quote">{t.footer.requestQuote}</Link>
+              <Link to="/quality">{t.footer.approachQuality}</Link>
+              <Link to="/contact">{t.footer.contactInfo}</Link>
             </div>
             <div className="footer-note" data-scroll="fade-up" style={{ '--scroll-delay': '200ms' } as React.CSSProperties}>
-              <span>A THOUGHTFUL PREVIEW</span>
+              <span>{t.footer.previewTitle}</span>
               <p>
-                Created around the Siri vision.
+                {t.footer.previewBody1}
                 <br />
-                Verified product and company details
+                {t.footer.previewBody2}
                 <br />
-                will complete the story.
+                {t.footer.previewBody3}
               </p>
             </div>
           </div>
           <div className="footer-bottom">
             <span>© {new Date().getFullYear()} Siri Aquatic Solutions Pvt. Ltd.</span>
             <div>
-              <Link to="/image-credits">Image credits</Link>
-              <Link to="/legal/privacy">Privacy</Link>
-              <Link to="/legal/terms">Site information</Link>
-              <Link to="/accessibility">Accessibility</Link>
+              <Link to="/image-credits">{t.footer.credits}</Link>
+              <Link to="/legal/privacy">{t.footer.privacy}</Link>
+              <Link to="/legal/terms">{t.footer.terms}</Link>
+              <Link to="/accessibility">{t.footer.a11y}</Link>
               <button aria-pressed={reduced} onClick={() => setReduced(!reduced)}>
-                {reduced ? 'Enable' : 'Reduce'} animations {reduced ? <Plus size={13} /> : <Minus size={13} />}
+                {reduced ? t.footer.enableAnim : t.footer.reduceAnim} {t.footer.animations}{' '}
+                {reduced ? <Plus size={13} /> : <Minus size={13} />}
               </button>
             </div>
             <a href="#main" aria-label="Back to top">
@@ -1279,7 +1228,7 @@ function App() {
       >
         <div className="search-dialog">
           <div>
-            <h2>What brings you here?</h2>
+            <h2>{t.search.title}</h2>
             <button className="icon-button" aria-label="Close search" onClick={() => setSearch(false)}>
               <X />
             </button>
@@ -1289,7 +1238,7 @@ function App() {
             <input
               autoFocus
               aria-label="Search site"
-              placeholder="Search aerators, probiotics, equipment…"
+              placeholder={t.search.placeholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -1299,9 +1248,10 @@ function App() {
               ...aeratorProducts.map((p) => ({ name: p.name, url: `/products/${p.id}` })),
               ...spareEquipmentProducts.map((p) => ({ name: p.name, url: `/products/${p.id}` })),
               ...probioticProducts.map((p) => ({ name: `${p.code} · ${p.name}`, url: `/probiotics#${p.id}` })),
-              { name: 'Aerators catalogue', url: '/aerators' },
-              { name: 'Probiotics & pond care', url: '/probiotics' },
-              { name: 'Request a quote', url: '/request-a-quote' }
+              { name: t.search.aeratorsCat, url: '/aerators' },
+              { name: t.search.sparesCat, url: '/spares' },
+              { name: t.search.probioticsCat, url: '/probiotics' },
+              { name: t.search.quoteCat, url: '/request-a-quote' }
             ]
               .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
               .map((p) => (
@@ -1317,7 +1267,7 @@ function App() {
                 </button>
               ))}
           </div>
-          <p>Search aerators, probiotics and quote options.</p>
+          <p>{t.search.note}</p>
         </div>
       </dialog>
     </>
@@ -1325,16 +1275,29 @@ function App() {
 }
 
 function Breadcrumb({ name }: { name: string }) {
+  const { lang } = useSiteLang();
   return (
     <div className="breadcrumb">
-      <Link to="/">Home</Link>
+      <Link to="/">{siteText[lang].common.home}</Link>
       <span>/</span>
       <span>{name}</span>
     </div>
   );
 }
 
-const router = createBrowserRouter([{ path: '*', element: <App /> }], { basename: import.meta.env.BASE_URL });
+const router = createBrowserRouter(
+  [
+    {
+      path: '*',
+      element: (
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
+      )
+    }
+  ],
+  { basename: import.meta.env.BASE_URL }
+);
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RouterProvider router={router} />

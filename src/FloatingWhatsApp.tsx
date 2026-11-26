@@ -4,7 +4,7 @@ import { MessageCircle, X } from 'lucide-react';
 export function FloatingWhatsApp() {
   const [tooltip, setTooltip] = useState(true);
 
-  const phoneNumber = '919440123456';
+  const phoneNumber = '919885717986';
   const message = encodeURIComponent("Hello Siri Aquatic, I'm interested in your aquaculture equipment and aeration solutions. Please share details.");
   const waUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

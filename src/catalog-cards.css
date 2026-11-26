@@ -35,6 +35,274 @@
   color: #ffffff;
 }
 
+/* Separate category subsections inside "Find the equipment you need." */
+.range-subsection {
+  margin-top: 52px;
+  padding-top: 38px;
+  border-top: 1px solid #dfecee;
+}
+
+.range-subsection:first-of-type {
+  margin-top: 12px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.range-subsection-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.range-subsection-head .eyebrow {
+  margin-bottom: 6px;
+  color: #007d8e;
+}
+
+.range-subsection-head h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.9px;
+  color: #102b33;
+  margin: 0;
+}
+
+.product-grid.product-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px !important;
+}
+
+@media (max-width: 1120px) {
+  .product-grid.product-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .product-grid.product-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Side-scrollable horizontal card rails for homepage category subsections */
+.range-subsection-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rail-scroll-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rail-scroll-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: #10323b;
+  border: 1px solid #c9dfe4;
+  box-shadow: 0 2px 8px rgba(13, 46, 56, 0.06);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.rail-scroll-btn:hover {
+  background: #01b8c8;
+  border-color: #01b8c8;
+  color: #04252b;
+  transform: translateY(-1px);
+}
+
+.product-grid.product-rail {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 22px !important;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  padding: 8px 4px 20px;
+  margin: -8px -4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #9ec8d0 #edf5f7;
+  -webkit-overflow-scrolling: touch;
+}
+
+.product-grid.product-rail::-webkit-scrollbar {
+  height: 6px;
+}
+
+.product-grid.product-rail::-webkit-scrollbar-track {
+  background: #edf5f7;
+  border-radius: 999px;
+}
+
+.product-grid.product-rail::-webkit-scrollbar-thumb {
+  background: #9ec8d0;
+  border-radius: 999px;
+}
+
+.product-grid.product-rail::-webkit-scrollbar-thumb:hover {
+  background: #01b8c8;
+}
+
+.product-grid.product-rail .product-card {
+  flex: 0 0 clamp(285px, 28vw, 370px);
+  scroll-snap-align: start;
+}
+
+@media (max-width: 640px) {
+  .product-grid.product-rail .product-card {
+    flex: 0 0 82vw;
+  }
+}
+
+/* Quote form Telugu / English filter and WhatsApp submit UI */
+.quote-form-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.quote-form-top h2 {
+  margin-bottom: 0 !important;
+}
+
+.quote-lang-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #c9dfe4;
+  color: #16404a;
+}
+
+.quote-lang-filter svg {
+  margin-left: 7px;
+  color: #007d8e;
+}
+
+.quote-lang-filter button {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: transparent;
+  color: #35545d;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.quote-lang-filter button:hover {
+  background: #edf7f9;
+}
+
+.quote-lang-filter button.is-active {
+  background: #073d4e;
+  color: #ffffff;
+}
+
+.quote-wa-submit {
+  background: #128c7e !important;
+  color: #ffffff !important;
+}
+
+.quote-wa-submit:hover {
+  background: #0e7367 !important;
+}
+
+.quote-wa-status {
+  margin-top: 16px;
+}
+
+.quote-wa-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0c6e63;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Global website language switcher in header */
+.site-lang-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--nav-line, #cbdfe5);
+  background: rgba(255, 255, 255, 0.08);
+  gap: 2px;
+}
+
+.site-lang-switch button {
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--nav-ink, #11191b);
+  font-family: 'Poppins', 'Noto Sans Telugu', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.site-lang-switch button.is-active {
+  background: #e29136;
+  color: #142b2f;
+}
+
+header.calm-header[data-surface="light"] .site-lang-switch {
+  background: rgba(17, 25, 27, 0.04);
+  border-color: rgba(23, 44, 50, 0.22);
+}
+
+/* Safe typography spacing when Telugu is active */
+html[lang="te"],
+html[lang="te"] body,
+html[lang="te"] h1,
+html[lang="te"] h2,
+html[lang="te"] h3,
+html[lang="te"] h4,
+html[lang="te"] p,
+html[lang="te"] a,
+html[lang="te"] button,
+html[lang="te"] span {
+  font-family: 'Noto Sans Telugu', 'DM Sans', 'Poppins', sans-serif;
+}
+
+html[lang="te"] h1,
+html[lang="te"] h2,
+html[lang="te"] h3,
+html[lang="te"] .gallery-headline,
+html[lang="te"] .inner h1 {
+  letter-spacing: -0.01em !important;
+  line-height: 1.24 !important;
+}
+
+@media (max-width: 640px) {
+  .site-lang-switch button {
+    padding: 5px 8px;
+    font-size: 10.5px;
+  }
+}
+
 /* Card appearance matching reference screenshot 2 */
 .product-grid .product-card {
   border: 1px solid #e1ecee;

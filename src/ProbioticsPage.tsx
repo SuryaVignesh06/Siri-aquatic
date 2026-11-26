@@ -13,6 +13,7 @@ import {
   HeartPulse
 } from 'lucide-react';
 import { probioticProducts, ProbioticIconKey } from './catalogData';
+import { probioticTeluguMap, siteText, useSiteLang } from './i18n';
 import './probiotics-page.css';
 
 function HighlightIcon({ icon }: { icon: ProbioticIconKey }) {
@@ -37,6 +38,10 @@ function HighlightIcon({ icon }: { icon: ProbioticIconKey }) {
 
 export function ProbioticsPage() {
   const { hash } = useLocation();
+  const { lang } = useSiteLang();
+  const t = siteText[lang].probioticsPage;
+  const homeLabel = siteText[lang].common.home;
+
   useEffect(() => {
     if (!hash) return;
     const target = document.getElementById(hash.slice(1));
@@ -48,75 +53,84 @@ export function ProbioticsPage() {
       <div className="probiotics-shell">
         <div className="probiotics-hero-header" data-scroll="fade-up">
           <div className="breadcrumb">
-            <Link to="/">Home</Link>
+            <Link to="/">{homeLabel}</Link>
             <span>/</span>
-            <span>Probiotics</span>
+            <span>{t.breadcrumb}</span>
           </div>
-          <span className="eyebrow">DB BIO-ORGANICS · ANTIBIOTIC-FREE AQUACULTURE</span>
+          <span className="eyebrow">{t.eyebrow}</span>
           <h1>
-            Biological pond care
+            {t.h1a}
             <br />
-            &amp; shrimp probiotics.
+            {t.h1b}
           </h1>
-          <p className="lead">
-            Enzyme-rich probiotics, gut-health liquids, and ionic minerals from our brochure — protecting shrimp immunity,
-            reducing ammonia &amp; sludge, and keeping pond water naturally balanced.
-          </p>
+          <p className="lead">{t.lead}</p>
         </div>
 
         {/* Ordered P1 -> P9 Side-by-Side Glassmorphism Cards */}
         <div className="probiotics-grid">
-          {probioticProducts.map((item, idx) => (
-            <article key={item.id} id={item.id} className="probiotic-glass-card">
-              <div className="probiotic-card-top">
-                <div className="probiotic-thumb">
-                  <img src={item.image} alt={`${item.name} — ${item.subtitle}`} loading={idx < 3 ? 'eager' : 'lazy'} />
-                </div>
-                <div className="probiotic-head-text">
-                  <span className="probiotic-series-tag">
-                    {item.code} · {item.series}
-                  </span>
-                  <h2>{item.name}</h2>
-                  <p>{item.subtitle}</p>
-                </div>
-                <Link
-                  to={`/products/${item.id}`}
-                  className="probiotic-circle-arrow"
-                  aria-label={`View full details for ${item.name}`}
-                >
-                  <ArrowUpRight size={18} strokeWidth={1.8} />
-                </Link>
-              </div>
+          {probioticProducts.map((item, idx) => {
+            const te = lang === 'te' ? probioticTeluguMap[item.id] : undefined;
+            const series = te ? te.series : item.series;
+            const subtitle = te ? te.subtitle : item.subtitle;
+            const dosage = te ? te.shortDosage : item.shortDosage;
+            const ingredients = te ? te.shortIngredients : item.shortIngredients;
 
-              <div className="probiotic-highlights-row">
-                {item.highlights.map((hl) => (
-                  <div key={`${item.id}-${hl.line1}-${hl.line2}`} className="probiotic-hl-item">
-                    <HighlightIcon icon={hl.icon} />
-                    <span>
-                      {hl.line1}
-                      <br />
-                      {hl.line2}
-                    </span>
+            return (
+              <article key={item.id} id={item.id} className="probiotic-glass-card">
+                <div className="probiotic-card-top">
+                  <div className="probiotic-thumb">
+                    <img src={item.image} alt={`${item.name} — ${subtitle}`} loading={idx < 3 ? 'eager' : 'lazy'} />
                   </div>
-                ))}
-              </div>
+                  <div className="probiotic-head-text">
+                    <span className="probiotic-series-tag">
+                      {item.code} · {series}
+                    </span>
+                    <h2>{item.name}</h2>
+                    <p>{subtitle}</p>
+                  </div>
+                  <Link
+                    to={`/products/${item.id}`}
+                    className="probiotic-circle-arrow"
+                    aria-label={`View full details for ${item.name}`}
+                  >
+                    <ArrowUpRight size={18} strokeWidth={1.8} />
+                  </Link>
+                </div>
 
-              <div className="probiotic-bottom-split">
-                <div>
-                  <span>
-                    <FlaskConical size={13} /> DOSAGE
-                  </span>
-                  <p>{item.shortDosage}</p>
+                <div className="probiotic-highlights-row">
+                  {item.highlights.map((hl, hIdx) => {
+                    const l1 = te ? te.highlights[hIdx * 2] : hl.line1;
+                    const l2 = te ? te.highlights[hIdx * 2 + 1] : hl.line2;
+                    return (
+                      <div key={`${item.id}-${hl.line1}-${hl.line2}`} className="probiotic-hl-item">
+                        <HighlightIcon icon={hl.icon} />
+                        <span>
+                          {l1}
+                          <br />
+                          {l2}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div>
-                  <span>
-                    <Leaf size={13} /> INGREDIENTS
-                  </span>
-                  <p>{item.shortIngredients}</p>
+
+                <div className="probiotic-bottom-split">
+                  <div>
+                    <span>
+                      <FlaskConical size={13} /> {t.dosage}
+                    </span>
+                    <p>{dosage}</p>
+                  </div>
+                  <div>
+                    <span>
+                      <Leaf size={13} /> {t.ingredients}
+                    </span>
+                    <p>{ingredients}</p>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

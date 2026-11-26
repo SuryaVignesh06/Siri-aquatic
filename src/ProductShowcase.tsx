@@ -3,13 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Gauge, Weight, Cable, ShieldCheck, Play, Pause } from 'lucide-react';
 import './glass-gallery.css';
+import { siteText, useSiteLang } from './i18n';
 
 interface ShowcaseProduct {
   id: string;
   name: string;
-  subtitle: string;
-  tagline: string;
-  caption: string;
   image: string;
   alt: string;
   featureChip: string;
@@ -37,9 +35,6 @@ const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'paddle-wheel',
     name: 'Pro-4 Paddle Aerator',
-    subtitle: 'Surface Aeration System',
-    tagline: 'Oxygen, delivered.',
-    caption: 'Four-paddle surface aeration with a sealed protective drive cover, thoughtfully configured around your pond.',
     image: assetUrl('/images/aerator-4paddle-real.png'),
     alt: '4-paddle wheel aerator with sealed blue drive hood and three virgin HDPE floats',
     featureChip: 'SEALED DRIVE HOOD',
@@ -65,9 +60,6 @@ const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'compact-aerator',
     name: 'Turbo-2 Compact Aerator',
-    subtitle: 'Rapid Dissolved Oxygen Booster',
-    tagline: 'Power in every pulse.',
-    caption: 'Compact twin-paddle aeration for nursery ponds, smaller spaces and flexible circulation layouts.',
     image: assetUrl('/images/aerator-2paddle-real.png'),
     alt: '2-paddle compact wheel aerator with twin floats and yellow impellers',
     featureChip: 'HIGH-TORQUE MOTOR',
@@ -93,9 +85,6 @@ const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'spiral-impeller',
     name: 'Surge Impeller Aerator',
-    subtitle: 'Subsurface Destratification Pump',
-    tagline: 'Deep water renewed.',
-    caption: 'Floating impeller circulation that lifts deep bottom water, reduces stratification and refreshes the pond floor.',
     image: assetUrl('/images/aerator-impeller-real.png'),
     alt: 'Floating impeller aerator with circular blue float ring and stainless steel intake strainer',
     featureChip: 'SS INTAKE STRAINER',
@@ -121,9 +110,6 @@ const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'pro-6-paddle',
     name: 'Pro-6 Heavy-Duty Aerator',
-    subtitle: 'High-Density Culture Aeration',
-    tagline: 'Built wider. Stronger flow.',
-    caption: 'Six high-efficiency perforated paddles on a central gearbox shaft for demanding high-stocking ponds.',
     image: assetUrl('/images/aerator-6paddle-real.png'),
     alt: '6-paddle wheel aerator with central vertical motor, gearbox and four blue floats',
     featureChip: 'CENTRE GEARBOX DRIVE',
@@ -149,9 +135,6 @@ const showcaseProducts: ShowcaseProduct[] = [
   {
     id: 'max-8-paddle',
     name: 'Max-8 Commercial Aerator',
-    subtitle: 'Wide-Span Grow-Out System',
-    tagline: 'Maximum reach. Calm control.',
-    caption: 'Eight-paddle long-span surface aerator built across five floats to sustain oxygen across large ponds.',
     image: assetUrl('/images/aerator-8paddle-real.png'),
     alt: '8-paddle long-span commercial aerator with five blue floats and yellow paddle wheels',
     featureChip: '5-FLOAT STABILITY',
@@ -176,17 +159,10 @@ const showcaseProducts: ShowcaseProduct[] = [
   }
 ];
 
-const headlines = [
-  ['Every ripple.', 'New possibility.'],
-  ['Small footprint.', 'Room to grow.'],
-  ['Go deeper.', 'Keep things moving.'],
-  ['Built wider.', 'Stronger flow.'],
-  ['Maximum reach.', 'Calm control.']
-];
-
-const units = ['4-Paddle', '2-Paddle', 'Impeller', '6-Paddle', '8-Paddle'];
-
 export function ProductShowcase() {
+  const { lang } = useSiteLang();
+  const t = siteText[lang].showcase;
+
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [interacting, setInteracting] = useState(false);
@@ -236,10 +212,10 @@ export function ProductShowcase() {
   }, [paused, interacting, isVisible, reduced, count]);
 
   const info = [
-    { Icon: Weight, label: 'Weight', value: product.mainInfo.weight },
-    { Icon: Gauge, label: 'Power', value: product.mainInfo.power },
-    { Icon: Cable, label: 'Power supply', value: product.mainInfo.supply },
-    { Icon: ShieldCheck, label: 'Warranty', value: product.mainInfo.warranty }
+    { Icon: Weight, label: t.specLabels.weight, value: product.mainInfo.weight },
+    { Icon: Gauge, label: t.specLabels.power, value: product.mainInfo.power },
+    { Icon: Cable, label: t.specLabels.powerSupply, value: product.mainInfo.supply },
+    { Icon: ShieldCheck, label: t.specLabels.warranty, value: product.mainInfo.warranty }
   ];
 
   const isPlaying = !paused && !interacting && isVisible && !reduced;
@@ -273,20 +249,22 @@ export function ProductShowcase() {
 
       <div className="gallery-layout">
         <div className="gallery-left">
-          <span className="gallery-eyebrow">IN OUR ELEMENT / 0{active + 1}</span>
-          <h2 className="gallery-headline" key={`headline-${active}`}>
-            {headlines[active].map((line) => (
+          <span className="gallery-eyebrow">
+            {t.eyebrowPrefix} / 0{active + 1}
+          </span>
+          <h2 className="gallery-headline" key={`headline-${active}-${lang}`}>
+            {t.headlines[active].map((line) => (
               <span key={line}>{line}</span>
             ))}
           </h2>
-          <div className="gallery-glass gallery-details" key={`details-${active}`}>
-            <p className="gallery-caption">{product.caption}</p>
+          <div className="gallery-glass gallery-details" key={`details-${active}-${lang}`}>
+            <p className="gallery-caption">{t.captions[active]}</p>
             <dl className="gallery-specs">
               {[
-                ['Type', product.specs.type],
-                ['Coverage', product.specs.coverage],
-                ['Power supply', product.specs.powerSupply],
-                ['Operating mode', product.specs.operatingMode]
+                [t.specLabels.type, product.specs.type],
+                [t.specLabels.coverage, product.specs.coverage],
+                [t.specLabels.powerSupply, product.specs.powerSupply],
+                [t.specLabels.operatingMode, product.specs.operatingMode]
               ].map(([label, value]) => (
                 <div key={label}>
                   <dt>{label}</dt>
@@ -296,16 +274,16 @@ export function ProductShowcase() {
             </dl>
             <div className="gallery-feature">
               <div>
-                <span>A closer look</span>
+                <span>{t.closerLook}</span>
                 <strong>{product.featureChip}</strong>
               </div>
               <p>{product.featureDesc}</p>
             </div>
             <Link to={`/products/${product.id}`} className="gallery-cta">
-              Explore the equipment <ArrowUpRight size={20} strokeWidth={1.6} />
+              {t.exploreEquipment} <ArrowUpRight size={20} strokeWidth={1.6} />
             </Link>
             <Link to={`/request-a-quote?product=${product.id}`} className="gallery-enquire">
-              Talk about your pond <ArrowRight size={16} strokeWidth={1.6} />
+              {t.talkPond} <ArrowRight size={16} strokeWidth={1.6} />
             </Link>
           </div>
         </div>
@@ -327,7 +305,7 @@ export function ProductShowcase() {
 
           <div className="gallery-switcher">
             <div className="gallery-switcher-top">
-              <span>Find your flow</span>
+              <span>{t.findFlow}</span>
               <div>
                 <button
                   type="button"
@@ -380,7 +358,7 @@ export function ProductShowcase() {
                   onClick={() => change(index)}
                 >
                   <img src={item.image} alt="" width="88" height="70" loading="lazy" />
-                  <span>{units[index]}</span>
+                  <span>{t.units[index]}</span>
                   <span className="gallery-selection-dot" aria-hidden="true" />
                   {active === index && isPlaying && (
                     <span className="gallery-slide-progress" key={`prog-${active}`} aria-hidden="true" />
@@ -392,10 +370,10 @@ export function ProductShowcase() {
         </div>
 
         <div className="gallery-right" id="equipment-info" role="tabpanel" aria-labelledby={`equipment-tab-${active}`}>
-          <div className="gallery-glass gallery-title-card" key={`title-${active}`}>
+          <div className="gallery-glass gallery-title-card" key={`title-${active}-${lang}`}>
             <span className="gallery-eyebrow">{product.specs.type}</span>
             <h3>{product.name}</h3>
-            <p>{product.tagline}</p>
+            <p>{t.taglines[active]}</p>
             <svg className="gallery-wave" viewBox="0 0 350 90" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
                 <path
@@ -408,11 +386,11 @@ export function ProductShowcase() {
                 />
               ))}
             </svg>
-            <span className="gallery-title-caption">Quality comes first. In every detail.</span>
+            <span className="gallery-title-caption">{t.qualityCaption}</span>
           </div>
 
-          <div className="gallery-glass gallery-main-info" key={`info-${active}`}>
-            <h4>The details</h4>
+          <div className="gallery-glass gallery-main-info" key={`info-${active}-${lang}`}>
+            <h4>{t.theDetails}</h4>
             <div className="gallery-info-grid">
               {info.map(({ Icon, label, value }) => (
                 <div key={label}>
