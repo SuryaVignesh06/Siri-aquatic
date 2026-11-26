@@ -80,39 +80,24 @@ export function QuotePage() {
     const name = val('Name');
     const phone = val('Phone');
     const email = val('Email');
-    const interest = val('Interest') || (formLang === 'te' ? 'సరైన పరికరం సూచించగలరు' : 'Help me choose');
+    const interest = val('Interest') || 'Help me choose';
     const area = val('Pond area');
     const loc = val('Location');
     const reqs = val('Requirements');
 
-    const lines =
-      formLang === 'te'
-        ? [
-            '*సిరి ఆక్వాటిక్ — కొటేషన్ విచారణ (SIRI AQUATIC)*',
-            '',
-            `*పేరు:* ${name}`,
-            `*ఫోన్ నంబర్:* ${phone}`,
-            email ? `*ఈమెయిల్:* ${email}` : '',
-            `*ఆసక్తి ఉన్నవి:* ${interest}`,
-            area ? `*చెరువు విస్తీర్ణం:* ${area}` : '',
-            `*ప్రాంతం:* ${loc}`,
-            reqs ? `*అవసరాల వివరాలు:* ${reqs}` : '',
-            '',
-            'దయచేసి ధర మరియు పూర్తి వివరాలు పంపగలరు.'
-          ]
-        : [
-            '*SIRI AQUATIC — QUOTE ENQUIRY*',
-            '',
-            `*Name:* ${name}`,
-            `*Phone:* ${phone}`,
-            email ? `*Email:* ${email}` : '',
-            `*Interested In:* ${interest}`,
-            area ? `*Pond Area:* ${area}` : '',
-            `*Location:* ${loc}`,
-            reqs ? `*Requirements:* ${reqs}` : '',
-            '',
-            'Please share pricing, availability, and specifications.'
-          ];
+    const lines = [
+      '*SIRI AQUATIC — QUOTE ENQUIRY*',
+      '',
+      `*Name:* ${name}`,
+      `*Phone:* ${phone}`,
+      email ? `*Email:* ${email}` : '',
+      `*Interested In:* ${interest}`,
+      area ? `*Pond Area:* ${area}` : '',
+      `*Location:* ${loc}`,
+      reqs ? `*Requirements:* ${reqs}` : '',
+      '',
+      'Please share pricing, availability, and specifications.'
+    ];
 
     const message = lines.filter((line, idx, arr) => line !== '' || (idx > 0 && arr[idx - 1] !== '')).join('\n');
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
